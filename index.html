@@ -1,0 +1,3116 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syyttäjän työpöytä – Haastehakemus</title>
+  <style>
+    :root {
+      --bg: #eef0f4;
+      --panel: #ffffff;
+      --navy: #1b3a6b;
+      --navy-mid: #2d5fa6;
+      --navy-light: #dce8f8;
+      --text: #1c1f26;
+      --muted: #64748b;
+      --border: #dde1e7;
+      --highlight: #f0f5ff;
+      --active-border: #3b82f6;
+      --danger: #dc2626;
+      --sidebar-w: 272px;
+      --nav-h: 52px;
+      --radius: 5px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      height: var(--nav-h);
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.22);
+      z-index: 100;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      color: white;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .brand-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    .nb-sep { width: 1px; height: 26px; background: rgba(255,255,255,0.18); }
+
+    .navbar-case-id {
+      font-weight: 600;
+      font-size: 13px;
+      color: white;
+    }
+
+    .navbar-case-desc {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-left: 2px;
+    }
+
+    .navbar-spacer { flex: 1; }
+
+    .status-chip {
+      padding: 3px 9px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: rgba(251,191,36,0.18);
+      color: #fbbf24;
+      border: 1px solid rgba(251,191,36,0.28);
+    }
+
+    .nb-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .nb-btn-ghost {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .nb-btn-ghost:hover { background: rgba(255,255,255,0.18); }
+
+    .nb-btn-solid {
+      background: white;
+      color: var(--navy);
+      font-weight: 600;
+    }
+    .nb-btn-solid:hover { background: #e0eaf9; }
+
+    .nb-btn-purple {
+      background: rgba(139,92,246,0.8);
+      color: white;
+      border: 1px solid rgba(139,92,246,0.4);
+    }
+    .nb-btn-purple:hover { background: rgba(139,92,246,1); }
+
+    /* Autosave indicator */
+    .save-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.5);
+      font-family: 'Segoe UI', sans-serif;
+      transition: color 0.3s;
+      user-select: none;
+    }
+    .save-indicator.saving { color: rgba(255,255,255,0.85); }
+    .save-indicator.saved { color: rgba(255,255,255,0.55); }
+    .save-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .save-indicator.saving .save-dot {
+      opacity: 1;
+      animation: save-pulse 0.7s ease-in-out infinite alternate;
+    }
+    .save-indicator.saved .save-dot { opacity: 1; }
+    @keyframes save-pulse {
+      from { opacity: 0.4; }
+      to   { opacity: 1; }
+    }
+
+    /* ===== LAYOUT ===== */
+    .app-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .sb-section { border-bottom: 1px solid var(--border); }
+
+    .sb-header {
+      padding: 9px 13px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      background: #f9fafc;
+    }
+    .sb-header:hover { background: var(--highlight); }
+
+    .sb-toggle { font-size: 9px; transition: transform 0.2s; }
+    .sb-toggle.collapsed { transform: rotate(-90deg); }
+
+    .sb-content { padding: 6px 0; }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 13px;
+      gap: 8px;
+    }
+
+    .meta-label { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    .meta-value { font-size: 11px; font-weight: 500; text-align: right; color: var(--text); }
+
+    /* Outline */
+    .outline-item {
+      display: flex;
+      align-items: center;
+      padding: 5px 13px;
+      cursor: pointer;
+      font-size: 12px;
+      gap: 7px;
+      border-left: 3px solid transparent;
+      transition: all 0.1s;
+    }
+    .outline-item:hover { background: var(--highlight); }
+    .outline-item.active {
+      background: var(--navy-light);
+      border-left-color: var(--navy-mid);
+      color: var(--navy);
+      font-weight: 600;
+    }
+
+    .oi-badge {
+      width: 17px; height: 17px;
+      border-radius: 3px;
+      background: var(--navy);
+      color: white;
+      font-size: 8.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .oi-badge.sub { background: var(--navy-mid); width: 13px; height: 13px; margin-left: 14px; }
+
+    .oi-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .oi-dot.ok { background: #22c55e; }
+    .oi-dot.partial { background: #f59e0b; }
+    .oi-dot.empty { background: #e5e7eb; }
+
+    /* Source materials */
+    .source-item {
+      padding: 5px 13px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      color: var(--muted);
+      border-left: 3px solid transparent;
+    }
+    .source-item:hover { background: var(--highlight); color: var(--text); }
+    .source-tag {
+      font-size: 9px;
+      padding: 1px 5px;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 3px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .source-tag.rv { background: #dbeafe; color: #1e40af; }
+
+    .sidebar-scroll { overflow-y: auto; flex: 1; }
+
+    /* ===== MAIN AREA ===== */
+    .main-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px 40px;
+    }
+
+    /* ===== DOCUMENT TOOLBAR ===== */
+    .doc-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .dt-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .dt-btn:hover { background: var(--highlight); border-color: var(--active-border); }
+    .dt-btn.primary { background: var(--navy); color: white; border-color: var(--navy); }
+    .dt-btn.primary:hover { background: var(--navy-mid); }
+    .dt-btn.purple { background: #7c3aed; color: white; border-color: #7c3aed; }
+    .dt-btn.purple:hover { background: #6d28d9; }
+
+    .dt-spacer { flex: 1; }
+
+    .completeness-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .progress-track {
+      width: 100px;
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #22c55e;
+      border-radius: 3px;
+      width: 68%;
+    }
+
+    /* ===== DOCUMENT ===== */
+    .document-wrapper { max-width: 794px; margin: 0 auto; }
+
+    .document {
+      background: white;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.09);
+      padding: 44px 58px 56px;
+      font-family: 'Times New Roman', Times, Georgia, serif;
+      font-size: 11.5pt;
+      line-height: 1.55;
+      position: relative;
+    }
+
+    /* Doc header */
+    .doc-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--navy);
+      margin-bottom: 18px;
+    }
+
+    .doc-office-name {
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 700;
+      font-size: 12pt;
+      color: var(--navy);
+      letter-spacing: 0.04em;
+    }
+
+    .doc-office-sub {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 9pt;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .doc-logo {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+    }
+
+    .doc-title {
+      text-align: center;
+      font-size: 15pt;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+
+    .doc-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px 24px;
+      margin-bottom: 22px;
+      font-size: 10pt;
+    }
+
+    .dm-row { display: flex; gap: 8px; align-items: baseline; }
+    .dm-key { color: var(--muted); white-space: nowrap; min-width: 88px; font-family: 'Segoe UI', sans-serif; font-size: 9.5pt; }
+    .dm-val { font-weight: 600; }
+
+    .dm-select {
+      font-family: 'Times New Roman', Times, Georgia, serif;
+      font-size: 10pt;
+      font-weight: 600;
+      color: var(--text);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid transparent;
+      padding: 0 18px 0 0;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2364748b'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 2px center;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .dm-select:hover { border-bottom-color: var(--border); }
+    .dm-select:focus { border-bottom-color: var(--active-border); }
+
+    /* Section */
+    .doc-section { margin-bottom: 18px; }
+
+    .ds-title {
+      font-size: 10.5pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--navy);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Times New Roman', serif;
+    }
+
+    /* Vastaajat */
+    .vastaaja-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 9px 13px;
+      margin-bottom: 7px;
+      background: #fafbfc;
+      position: relative;
+    }
+    .vastaaja-card:hover { border-color: #93c5fd; }
+    .vastaaja-card:hover .card-actions { opacity: 1; }
+
+    .vc-name { font-weight: 700; font-size: 10.5pt; color: var(--navy); }
+    .vc-meta { font-size: 9.5pt; color: var(--muted); margin-top: 1px; font-family: 'Segoe UI', sans-serif; }
+
+    .vc-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .vc-chips {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+      align-items: center;
+      padding-top: 1px;
+    }
+
+    .rv-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px; height: 16px;
+      border-radius: 3px;
+      background: var(--navy);
+      color: white;
+      font-size: 8px;
+      font-weight: 700;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .rv-chip.ao { background: #92400e; }
+    .rv-chip.tod { background: #166534; }
+
+    .age-warn {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 9.5px;
+      font-weight: 700;
+      font-family: 'Segoe UI', sans-serif;
+      letter-spacing: 0.02em;
+    }
+    .age-warn.u15 { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .age-warn.u18 { background: #fff3cd; color: #92400e; border: 1px solid #fcd34d; }
+    .age-warn.u21 { background: #fef9c3; color: #713f12; border: 1px solid #fde047; }
+
+    .subsec-label {
+      margin-bottom: 5px;
+      font-size: 9pt;
+      color: var(--muted);
+      font-family: 'Segoe UI', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      font-weight: 700;
+    }
+
+    .todistaja-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 13px;
+      margin-bottom: 6px;
+      background: #f8faf8;
+      position: relative;
+    }
+    .todistaja-card:hover { border-color: #86efac; }
+    .todistaja-card:hover .card-actions { opacity: 1; }
+    .tc-name { font-weight: 700; font-size: 10.5pt; color: #14532d; }
+    .tc-meta { font-size: 9.5pt; color: var(--muted); margin-top: 1px; font-family: 'Segoe UI', sans-serif; }
+
+    .card-actions {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .ca-btn {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 2px 6px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.1s;
+    }
+    .ca-btn:hover { border-color: var(--active-border); color: var(--active-border); background: var(--highlight); }
+    .ca-btn.del:hover { border-color: var(--danger); color: var(--danger); background: #fef2f2; }
+
+    /* Rangaistusvaatimus */
+    .rv-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      overflow: visible;
+      position: relative;
+    }
+    .rv-block:hover { border-color: #93c5fd; }
+    .rv-block.focused { border-color: var(--active-border); box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+
+    .rv-head {
+      background: var(--navy-light);
+      padding: 8px 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .rv-head:hover { background: #ccddf5; }
+
+    .rv-head-title {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-family: 'Times New Roman', serif;
+    }
+
+    .rv-head-main {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .rv-head-num {
+      font-size: 10pt;
+      font-weight: 600;
+      color: var(--navy-mid);
+      font-family: 'Segoe UI', sans-serif;
+      flex-shrink: 0;
+    }
+
+    .rv-head-crime {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+
+    .rv-head-date {
+      font-size: 9pt;
+      color: var(--navy-mid);
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 400;
+    }
+
+    .rv-head-sub {
+      font-size: 9pt;
+      color: var(--navy-mid);
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 400;
+    }
+
+    .rv-head-summary {
+      display: none;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .rv-block.rv-collapsed .rv-head-summary { display: flex; }
+
+    .ptag-sm {
+      font-size: 9.5px !important;
+      padding: 1px 7px !important;
+      gap: 4px !important;
+    }
+
+    .rv-toggle-icon {
+      font-size: 10px;
+      color: var(--navy-mid);
+      transition: transform 0.2s;
+      font-family: sans-serif;
+    }
+    .rv-toggle-icon.collapsed { transform: rotate(-90deg); }
+
+    .rv-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .rv-body {
+      padding: 14px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .rv-field { display: grid; gap: 3px; }
+
+    .rv-label {
+      font-size: 8.5pt;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rv-label .edit-hint {
+      font-size: 9px;
+      color: var(--active-border);
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      font-style: italic;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .rv-field:hover .edit-hint { opacity: 1; }
+
+    .rv-value { font-size: 10.5pt; line-height: 1.6; }
+
+    /* Rikosnimike */
+    .rn-block { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; }
+    .rn-nimi { font-weight: 700; color: var(--navy); font-size: 10.5pt; }
+    .rn-pykala { font-size: 9.5pt; color: var(--muted); font-style: italic; }
+
+    /* Rikosnimike combo */
+    .rn-combo {
+      display: inline-flex; align-items: baseline; gap: 4px;
+      cursor: pointer; border-bottom: 1px dashed transparent;
+      transition: border-color 0.15s;
+    }
+    .rn-combo:hover { border-bottom-color: var(--navy); }
+    .rn-combo-caret {
+      font-size: 8pt; color: var(--muted); font-style: normal;
+      font-family: 'Segoe UI', sans-serif; font-weight: 400;
+      transition: color 0.15s;
+    }
+    .rn-combo:hover .rn-combo-caret { color: var(--navy); }
+
+    .rn-dropdown {
+      position: fixed; z-index: 2000;
+      background: white; border: 1px solid var(--border);
+      border-radius: 6px; box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+      width: 380px; display: none;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .rn-dropdown.open { display: block; }
+    .rn-search {
+      width: 100%; box-sizing: border-box;
+      border: none; border-bottom: 1px solid var(--border);
+      padding: 9px 12px; font-size: 12px;
+      font-family: inherit; outline: none; border-radius: 6px 6px 0 0;
+      color: var(--text);
+    }
+    .rn-list {
+      list-style: none; margin: 0; padding: 4px 0;
+      max-height: 280px; overflow-y: auto;
+    }
+    .rn-list li {
+      padding: 7px 12px; cursor: pointer; line-height: 1.35;
+    }
+    .rn-list li:hover, .rn-list li.rn-active { background: #f0f4fb; }
+    .rn-list-nimi { font-size: 11.5px; font-weight: 600; color: var(--navy); }
+    .rn-list-pykala { font-size: 10.5px; color: var(--muted); }
+    .rn-list-empty { padding: 10px 12px; font-size: 12px; color: var(--muted); }
+
+    /* Person tags */
+    .person-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 5px; }
+    .ptag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--navy-light);
+      color: var(--navy);
+      border: 1px solid #b8d0ee;
+      padding: 2px 8px 2px 9px;
+      border-radius: 3px;
+      font-size: 10pt;
+      font-weight: 600;
+    }
+    .ptag.ao { background: #fefcf0; color: #78350f; border-color: #e9d8a6; }
+    .ptag.tod { background: #f0faf4; color: #14532d; border-color: #86efac; }
+    .ptag .role { font-weight: 400; font-size: 9pt; color: var(--muted); }
+    .ptag-del {
+      background: none; border: none; cursor: pointer;
+      color: rgba(0,0,0,0.25); padding: 0; font-size: 12px; line-height: 1;
+      opacity: 0; transition: opacity 0.15s, color 0.1s;
+    }
+    .ptag:hover .ptag-del { opacity: 1; }
+    .ptag-del:hover { color: var(--danger) !important; }
+
+    /* RV persons subsections */
+    .rv-persons { display: grid; gap: 10px; }
+    .rv-psub-label {
+      font-size: 8pt; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.09em;
+      font-family: 'Segoe UI', sans-serif; margin-bottom: 4px;
+    }
+
+    /* Summary note */
+    .summary-note {
+      font-size: 9.5pt; color: var(--muted); font-family: 'Segoe UI', sans-serif;
+      font-style: italic; margin-bottom: 8px;
+    }
+
+    /* Evidence lists */
+    .ev-list { list-style: none; display: grid; gap: 3px; }
+
+    .ev-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 7px;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      transition: background 0.1s;
+    }
+    .ev-item:hover { background: var(--highlight); border-color: var(--border); }
+
+    .ev-num {
+      font-weight: 700;
+      color: var(--navy-mid);
+      min-width: 18px;
+      font-size: 10pt;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .ev-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .ev-text {
+      font-size: 10.5pt;
+      line-height: 1.5;
+    }
+
+    .ev-theme {
+      font-size: 9.5pt;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.4;
+    }
+
+    .ev-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #d1d5db;
+      font-size: 14px;
+      padding: 0;
+      opacity: 0;
+      transition: opacity 0.15s, color 0.1s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .ev-item:hover .ev-del { opacity: 1; }
+    .ev-del:hover { color: var(--danger); }
+
+    .add-ev-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 5px;
+      padding: 4px 10px;
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Segoe UI', sans-serif;
+      transition: all 0.15s;
+    }
+    .add-ev-btn:hover {
+      border-color: var(--active-border);
+      color: var(--active-border);
+      background: var(--highlight);
+    }
+
+    /* Add section row */
+    .add-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0 14px;
+    }
+    .add-row-line { flex: 1; height: 1px; background: var(--border); }
+
+    .add-row-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 13px;
+      background: white;
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11.5px;
+      color: var(--muted);
+      font-family: 'Segoe UI', sans-serif;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .add-row-btn:hover {
+      border-color: var(--active-border);
+      color: var(--active-border);
+      background: var(--highlight);
+    }
+
+    /* Plain sections (Muut, Yksityis, Lisätiedot) */
+    .plain-block {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+    .plain-block:hover { border-color: #93c5fd; }
+
+    .pb-head {
+      background: #f8f9fb;
+      padding: 7px 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .pb-head:hover { background: var(--highlight); }
+
+    .pb-title {
+      font-weight: 700;
+      font-size: 10pt;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-family: 'Times New Roman', serif;
+      flex: 1;
+    }
+
+    .pb-toggle { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+    .pb-toggle.collapsed { transform: rotate(-90deg); }
+
+    /* RV header crime combo */
+    .rv-head-combo {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      transition: border-color 0.15s;
+    }
+    .rv-head-combo:hover { border-bottom-color: var(--navy); }
+    .rv-head-combo .rn-combo-caret {
+      font-size: 8pt;
+      font-family: 'Segoe UI', sans-serif;
+      font-weight: 400;
+      color: var(--navy-mid);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .rv-head-combo:hover .rn-combo-caret { opacity: 1; }
+
+    .mv-combo {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      border-bottom: 1px dashed transparent;
+      transition: border-color 0.15s;
+    }
+    .mv-combo:hover { border-bottom-color: var(--navy); }
+    .mv-combo .rn-combo-caret { opacity: 0; transition: opacity 0.15s; }
+    .mv-combo:hover .rn-combo-caret { opacity: 1; }
+
+    .pb-body {
+      padding: 12px 14px;
+      font-size: 10.5pt;
+      line-height: 1.6;
+    }
+
+    /* Divider */
+    .doc-hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+
+    /* Signature */
+    .sig-block {
+      margin-top: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .sig-field { display: flex; flex-direction: column; gap: 3px; }
+    .sig-line { width: 200px; border-bottom: 1px solid var(--text); height: 28px; margin-bottom: 3px; }
+    .sig-caption { font-size: 9pt; color: var(--muted); font-family: 'Segoe UI', sans-serif; }
+
+    /* contentEditable */
+    [contenteditable="true"] {
+      outline: none;
+      cursor: text;
+      border-radius: 2px;
+      transition: background 0.12s, box-shadow 0.12s;
+    }
+    [contenteditable="true"]:hover { background: #f0f6ff; }
+    [contenteditable="true"]:focus {
+      background: #eff6ff;
+      box-shadow: inset 0 0 0 1px #93c5fd;
+      padding: 2px 5px;
+      margin: -2px -5px;
+    }
+
+    /* Tuomioistuininfo panel */
+    .court-panel {
+      position: fixed;
+      top: calc(var(--nav-h) + 14px);
+      right: 16px;
+      width: 310px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+      z-index: 200;
+      display: none;
+    }
+    .court-panel.visible { display: block; }
+
+    .cp-head {
+      background: #6d28d9;
+      color: white;
+      padding: 10px 13px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cp-title { font-weight: 700; font-size: 12px; letter-spacing: 0.04em; }
+    .cp-sub { font-size: 10px; opacity: 0.7; margin-top: 1px; }
+    .cp-close {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-size: 14px;
+      line-height: 1;
+    }
+    .cp-close:hover { background: rgba(255,255,255,0.25); }
+
+    .cp-body { padding: 13px; font-family: 'Segoe UI', sans-serif; font-size: 12px; }
+
+    .cp-field { margin-bottom: 10px; }
+    .cp-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .cp-val {
+      font-size: 12px;
+      color: var(--text);
+      border-radius: 3px;
+      padding: 2px 0;
+    }
+    .cp-val[contenteditable="true"]:hover { background: #f5f3ff; }
+    .cp-val[contenteditable="true"]:focus {
+      background: #ede9fe;
+      box-shadow: inset 0 0 0 1px #8b5cf6;
+      padding: 2px 5px;
+      margin: 0 -5px;
+    }
+
+    .cp-witness {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .cp-witness:last-child { border-bottom: none; }
+    .cp-wname { font-weight: 600; flex: 1; font-size: 12px; }
+    .cp-wdetail { font-size: 11px; color: var(--muted); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--navy);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-family: 'Segoe UI', sans-serif;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.22);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.2s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===== DATE PICKER ===== */
+    .date-picker {
+      position: fixed;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      z-index: 500;
+      display: none;
+      width: 272px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 12px;
+    }
+    .date-picker.visible { display: block; }
+
+    .dp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dp-month-label { font-weight: 700; font-size: 12.5px; color: var(--navy); }
+    .dp-nav {
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      cursor: pointer; padding: 2px 8px; font-size: 11px; color: var(--muted);
+      line-height: 1.4;
+    }
+    .dp-nav:hover { background: var(--highlight); border-color: var(--active-border); }
+
+    .dp-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 6px 8px 2px;
+      text-align: center;
+    }
+    .dp-wd {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      padding: 3px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .dp-wd.weekend { color: #9ca3af; }
+
+    .dp-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 2px 8px 8px;
+      gap: 1px;
+    }
+    .dp-day {
+      text-align: center;
+      padding: 5px 2px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: var(--text);
+      font-size: 12px;
+      transition: background 0.1s;
+      position: relative;
+    }
+    .dp-day:empty { cursor: default; }
+    .dp-day.other-month { color: #d1d5db; }
+    .dp-day:not(:empty):hover { background: var(--highlight); }
+    .dp-day.in-range { background: #dbeafe; border-radius: 0; }
+    .dp-day.range-start, .dp-day.range-end {
+      background: var(--navy) !important;
+      color: white;
+      border-radius: 4px;
+    }
+    .dp-day.range-start.in-range { border-radius: 4px 0 0 4px; }
+    .dp-day.range-end.in-range { border-radius: 0 4px 4px 0; }
+    .dp-day.today { font-weight: 700; }
+    .dp-day.today::after {
+      content: '';
+      position: absolute;
+      bottom: 2px; left: 50%; transform: translateX(-50%);
+      width: 3px; height: 3px; border-radius: 50%;
+      background: currentColor; opacity: 0.5;
+    }
+    .dp-day.weekend-day { color: #6b7280; }
+    .dp-day.range-start.weekend-day, .dp-day.range-end.weekend-day { color: white; }
+
+    .dp-footer {
+      border-top: 1px solid var(--border);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .dp-selection {
+      font-size: 11px;
+      color: var(--navy);
+      font-weight: 600;
+      flex: 1;
+      min-height: 16px;
+    }
+    .dp-clear {
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      cursor: pointer; padding: 3px 8px; font-size: 11px; color: var(--muted);
+      font-family: inherit;
+    }
+    .dp-clear:hover { border-color: var(--danger); color: var(--danger); background: #fef2f2; }
+    .dp-confirm {
+      background: var(--navy); color: white; border: none; border-radius: 4px;
+      cursor: pointer; padding: 3px 10px; font-size: 11px; font-family: inherit;
+      font-weight: 600;
+    }
+    .dp-confirm:hover { background: var(--navy-mid); }
+
+    /* Tekoaika click target */
+    .rv-value.date-field {
+      cursor: pointer;
+    }
+    .rv-value.date-field:hover { background: #f0f6ff; border-radius: 2px; }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+    /* Collapsible */
+    .collapsible { overflow: hidden; transition: max-height 0.25s ease, opacity 0.2s; }
+    .collapsible.closed { max-height: 0 !important; opacity: 0; }
+
+    /* Empty placeholder */
+    .empty-hint {
+      padding: 10px 13px;
+      border: 1px dashed var(--border);
+      border-radius: 3px;
+      color: var(--muted);
+      font-size: 10pt;
+      font-style: italic;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <span class="navbar-brand">
+    <span class="brand-badge">⚖ SYYTTÄJÄLAITOS</span>
+  </span>
+  <span class="nb-sep"></span>
+  <div>
+    <span class="navbar-case-id">R 24/2847</span>
+    <span class="navbar-case-desc">– Petos ja väärennys (Virtanen ym.)</span>
+  </div>
+  <span class="navbar-spacer"></span>
+  <span class="status-chip">Luonnos</span>
+  <span class="save-indicator" id="save-indicator">
+    <span class="save-dot"></span>
+    <span id="save-label">Tallennettu</span>
+  </span>
+  <button class="nb-btn nb-btn-ghost" onclick="showToast('Esikatselu avautuu...')">👁 Esikatselu</button>
+  <button class="nb-btn nb-btn-purple" onclick="toggleCourtInfo()">🔒 Tuomioistuininfo</button>
+  <button class="nb-btn nb-btn-solid" onclick="showToast('Hyväksytty ✓')">✅ Hyväksy</button>
+</nav>
+
+<!-- APP BODY -->
+<div class="app-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-scroll">
+
+      <!-- Case metadata -->
+      <div class="sb-section">
+        <div class="sb-header" onclick="toggleSb('sb-meta')">
+          <span>Asian tiedot</span>
+          <span class="sb-toggle" id="sb-meta-toggle">▼</span>
+        </div>
+        <div class="collapsible sb-content" id="sb-meta" style="max-height:200px">
+          <div class="meta-row"><span class="meta-label">Diaarinumero</span><span class="meta-value">R 24/2847</span></div>
+          <div class="meta-row"><span class="meta-label">Esitutkinta</span><span class="meta-value">7100/R/3421/24</span></div>
+          <div class="meta-row"><span class="meta-label">Syyttäjä</span><span class="meta-value">A-L Mäkinen</span></div>
+          <div class="meta-row"><span class="meta-label">Tuomioistuin</span><span class="meta-value">Helsinki KO</span></div>
+          <div class="meta-row"><span class="meta-label">Vastaajia</span><span class="meta-value">2</span></div>
+          <div class="meta-row"><span class="meta-label">Nimikkeitä</span><span class="meta-value">3</span></div>
+        </div>
+      </div>
+
+      <!-- Document outline -->
+      <div class="sb-section">
+        <div class="sb-header" onclick="toggleSb('sb-outline')">
+          <span>Asiakirjan rakenne</span>
+          <span class="sb-toggle" id="sb-outline-toggle">▼</span>
+        </div>
+        <div class="collapsible sb-content" id="sb-outline" style="max-height:400px">
+          <div class="outline-item active" onclick="scrollToSection('doc-title', this)">
+            <span class="oi-badge">H</span>
+            <span>Haastehakemus</span>
+            <span class="oi-dot ok"></span>
+          </div>
+          <div class="outline-item" onclick="scrollToSection('sec-vastaajat', this)">
+            <span class="oi-badge">A</span>
+            <span>Asianosaiset</span>
+            <span class="oi-dot ok"></span>
+          </div>
+          <div class="outline-item" id="oi-rv-1" onclick="scrollToSection('rv-1', this)">
+            <span class="oi-badge">1</span>
+            <span class="oi-rv-name">Törkeä petos</span>
+            <span class="oi-dot ok"></span>
+          </div>
+          <div class="outline-item" id="oi-rv-2" onclick="scrollToSection('rv-2', this)">
+            <span class="oi-badge">2</span>
+            <span class="oi-rv-name">Väärennys</span>
+            <span class="oi-dot partial"></span>
+          </div>
+          <div class="outline-item" id="oi-rv-3" onclick="scrollToSection('rv-3', this)">
+            <span class="oi-badge">3</span>
+            <span class="oi-rv-name">Petos</span>
+            <span class="oi-dot partial"></span>
+          </div>
+          <div class="outline-item" onclick="scrollToSection('sec-muut', this)">
+            <span class="oi-badge">M</span>
+            <span>Muut vaatimukset</span>
+            <span class="oi-dot empty"></span>
+          </div>
+          <div class="outline-item" onclick="scrollToSection('sec-yksitoik', this)">
+            <span class="oi-badge">Y</span>
+            <span>Yksityisoikeudell.</span>
+            <span class="oi-dot partial"></span>
+          </div>
+          <div class="outline-item" onclick="scrollToSection('sec-lisatiedot', this)">
+            <span class="oi-badge">L</span>
+            <span>Lisätiedot</span>
+            <span class="oi-dot partial"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Source materials from pre-investigation -->
+      <div class="sb-section">
+        <div class="sb-header" onclick="toggleSb('sb-source')">
+          <span>Esitutkinta-aineisto</span>
+          <span class="sb-toggle" id="sb-source-toggle">▼</span>
+        </div>
+        <div class="collapsible sb-content" id="sb-source" style="max-height:300px">
+          <div style="padding: 5px 13px 2px; font-size: 10px; color: var(--muted); font-style: italic;">Rikosnimikkeet esitutkinnasta</div>
+          <div class="source-item" onclick="showToast('Lisätty: Törkeä petos')">
+            <span class="source-tag rv">RV</span>
+            <span>Törkeä petos (RL 36:2) – Virtanen</span>
+          </div>
+          <div class="source-item" onclick="showToast('Lisätty: Petos')">
+            <span class="source-tag rv">RV</span>
+            <span>Petos (RL 36:1) – Virtanen</span>
+          </div>
+          <div class="source-item" onclick="showToast('Lisätty: Väärennys')">
+            <span class="source-tag rv">RV</span>
+            <span>Väärennys (RL 33:1) – molemmat</span>
+          </div>
+          <div style="padding: 6px 13px 2px; font-size: 10px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); margin-top: 4px;">Asianosaiset</div>
+          <div class="source-item">
+            <span class="source-tag">ET</span>
+            <span>Virtanen, Markku Aleksi</span>
+          </div>
+          <div class="source-item">
+            <span class="source-tag">ET</span>
+            <span>Korhonen, Sirpa Tuulikki</span>
+          </div>
+          <div style="padding: 6px 13px 2px; font-size: 10px; color: var(--muted); font-style: italic; border-top: 1px solid var(--border); margin-top: 4px;">Asianomistajat</div>
+          <div class="source-item">
+            <span class="source-tag">AO</span>
+            <span>Järvinen, Paavo</span>
+          </div>
+          <div class="source-item">
+            <span class="source-tag">AO</span>
+            <span>Heikkinen, Leena</span>
+          </div>
+          <div class="source-item">
+            <span class="source-tag">AO</span>
+            <span>Leinonen, Mats</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /sidebar-scroll -->
+  </aside>
+
+  <!-- MAIN AREA -->
+  <main class="main-area">
+
+    <!-- Toolbar -->
+    <div class="doc-toolbar">
+      <button class="dt-btn" onclick="addRV()">＋ Rangaistusvaatimus</button>
+      <button class="dt-btn" onclick="showToast('Muut vaatimukset -osio auki')">＋ Muu vaatimus</button>
+      <button class="dt-btn" onclick="showToast('Yksityisoikeudellinen vaatimus lisätty')">＋ Yksityisoikeudell.</button>
+      <span class="dt-spacer"></span>
+      <div class="completeness-bar">
+        <span>Valmiusaste</span>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <span style="font-weight:600; color:var(--text)">68 %</span>
+      </div>
+    </div>
+
+    <!-- DOCUMENT -->
+    <div class="document-wrapper">
+      <div class="document">
+
+        <!-- Title -->
+        <div class="doc-title" id="doc-title">Haastehakemus</div>
+
+        <!-- Meta -->
+        <div class="doc-meta">
+          <div class="dm-row">
+            <span class="dm-key">Diaarinumero</span>
+            <span class="dm-val">R 24/2847</span>
+          </div>
+          <div class="dm-row">
+            <span class="dm-key">Päiväys</span>
+            <span class="dm-val" contenteditable="true">26.6.2025</span>
+          </div>
+          <div class="dm-row">
+            <span class="dm-key">Tuomioistuin</span>
+            <select class="dm-select" id="tuomioistuin-select" onchange="document.querySelector('#meta-tuomioistuin').textContent=this.options[this.selectedIndex].text">
+              <option>Ahvenanmaan käräjäoikeus</option>
+              <option>Etelä-Karjalan käräjäoikeus</option>
+              <option>Etelä-Pohjanmaan käräjäoikeus</option>
+              <option>Etelä-Savon käräjäoikeus</option>
+              <option selected>Helsingin käräjäoikeus</option>
+              <option>Itä-Uudenmaan käräjäoikeus</option>
+              <option>Kainuun käräjäoikeus</option>
+              <option>Kanta-Hämeen käräjäoikeus</option>
+              <option>Keski-Suomen käräjäoikeus</option>
+              <option>Keski-Uudenmaan käräjäoikeus</option>
+              <option>Kymenlaakson käräjäoikeus</option>
+              <option>Lapin käräjäoikeus</option>
+              <option>Länsi-Uudenmaan käräjäoikeus</option>
+              <option>Oulun käräjäoikeus</option>
+              <option>Pirkanmaan käräjäoikeus</option>
+              <option>Pohjanmaan käräjäoikeus</option>
+              <option>Pohjois-Karjalan käräjäoikeus</option>
+              <option>Pohjois-Savon käräjäoikeus</option>
+              <option>Päijät-Hämeen käräjäoikeus</option>
+              <option>Satakunnan käräjäoikeus</option>
+              <option>Varsinais-Suomen käräjäoikeus</option>
+            </select>
+          </div>
+          <div class="dm-row">
+            <span class="dm-key">Syyttäjä</span>
+            <span class="dm-val">Anna-Liisa Mäkinen, kihlakunnansyyttäjä</span>
+          </div>
+        </div>
+
+        <!-- ASIANOSAISET -->
+        <div class="doc-section" id="sec-vastaajat">
+          <div class="ds-title" onclick="toggleRV('asianosaiset-body', 'asianosaiset-icon')" style="cursor:pointer; user-select:none">
+            Asianosaiset
+            <span id="asianosaiset-icon" class="rv-toggle-icon" style="font-size:11px; margin-left:auto">▼</span>
+          </div>
+          <div class="collapsible" id="asianosaiset-body" style="max-height:2000px">
+
+          <div class="subsec-label">Vastaajat</div>
+
+          <div class="vastaaja-card" id="v-1">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name">1. Virtanen, Markku Aleksi</div>
+                <div class="vc-meta">150380-1234 · 45 v · Mannerheimintie 45 B 12, 00100 Helsinki</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip" title="Rangaistusvaatimus 1">1</span>
+                <span class="rv-chip" title="Rangaistusvaatimus 2">2</span>
+                <span class="rv-chip" title="Rangaistusvaatimus 3">3</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('v-1', 'Vastaaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="vastaaja-card" id="v-2">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name">2. Korhonen, Sirpa Tuulikki</div>
+                <div class="vc-meta">220685-5678 · 40 v · Espoonkatu 8 A 3, 02100 Espoo</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip" title="Rangaistusvaatimus 2">2</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('v-2', 'Vastaaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="vastaaja-card" id="v-3">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name">3. Nieminen, Aleksi Juhani</div>
+                <div class="vc-meta">120708A5555 · 16 v · Hämeentie 12 A 1, 00530 Helsinki</div>
+                <span class="age-warn u18" style="margin-top:4px; display:inline-flex">⚠ Alle 18 v – nuori rikoksentekijä</span>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip" title="Rangaistusvaatimus 3">3</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('v-3', 'Vastaaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="subsec-label" style="margin-top:14px">Asianomistajat</div>
+
+          <div class="vastaaja-card" id="ao-1" style="background: #fefcf0; border-color: #e9d8a6;">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name" style="color: #78350f;">Järvinen, Paavo</div>
+                <div class="vc-meta">260170-2222 · 55 v</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('ao-1', 'Asianomistaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="vastaaja-card" id="ao-2" style="background: #fefcf0; border-color: #e9d8a6;">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name" style="color: #78350f;">Heikkinen, Leena</div>
+                <div class="vc-meta">150882-3333 · 42 v</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('ao-2', 'Asianomistaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="vastaaja-card" id="ao-3" style="background: #fefcf0; border-color: #e9d8a6;">
+            <div class="vc-row">
+              <div>
+                <div class="vc-name" style="color: #78350f;">Leinonen, Mats</div>
+                <div class="vc-meta">010390-4444 · 35 v</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('ao-3', 'Asianomistaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="subsec-label" style="margin-top:12px" id="sec-todistajat">Todistajat</div>
+
+          <div class="todistaja-card" id="tod-1">
+            <div class="vc-row">
+              <div>
+                <div class="tc-name">Mäkinen, Esko</div>
+                <div class="tc-meta">Todistaja · kirjanpitäjä, Kirjanpitotoimisto Laskentapalvelu Oy</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip tod" title="Rangaistusvaatimus 1">1</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa todistajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('tod-1', 'Todistaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          <div class="todistaja-card" id="tod-2">
+            <div class="vc-row">
+              <div>
+                <div class="tc-name">Saarinen, Jukka</div>
+                <div class="tc-meta">Asiantuntijatodistaja · digitaalinen forensiikka, Forensics Finland Oy</div>
+              </div>
+              <div class="vc-chips">
+                <span class="rv-chip tod" title="Rangaistusvaatimus 2">2</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="ca-btn" onclick="showToast('Muokkaa todistajaa...')">✏ Muokkaa</button>
+              <button class="ca-btn del" onclick="removeEl('tod-2', 'Todistaja poistettu')">✕ Poista</button>
+            </div>
+          </div>
+
+          </div><!-- /asianosaiset-body -->
+        </div>
+
+        <hr class="doc-hr">
+
+        <!-- RV 1: Törkeä petos -->
+        <div id="rv-1" class="rv-block" onclick="focusRV('rv-1')">
+          <div class="rv-head" onclick="toggleRV('rv-1-body', 'rv-1-icon'); event.stopPropagation()">
+            <div class="rv-head-title">
+              <div class="rv-head-main">
+                <span class="rv-head-num">1.</span>
+                <span class="rv-head-crime" id="rv-1-title">Törkeä petos</span>
+                <span class="rv-head-date" id="rv-1-date">15.1.2024–20.3.2024</span>
+              </div>
+              <div class="rv-head-summary" id="rv-1-summary"></div>
+            </div>
+            <div class="rv-actions" onclick="event.stopPropagation()">
+              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta muokataan...')">↕ Järjestä</button>
+              <button class="ca-btn del" onclick="removeRV('rv-1')">✕ Poista</button>
+            </div>
+            <span class="rv-toggle-icon" id="rv-1-icon">▼</span>
+          </div>
+
+          <div class="collapsible rv-body" id="rv-1-body" style="max-height: 2000px">
+
+            <div class="rv-field">
+              <div class="rv-label"></div>
+              <div class="rv-value">
+                <div class="rv-persons">
+                  <div>
+                    <div class="rv-psub-label">Vastaajat</div>
+                    <div class="person-tags" id="rv1-vastaajat">
+                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää vastaaja RV1:een...')">＋ Lisää vastaaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Asianomistajat</div>
+                    <div class="person-tags" id="rv1-asianomistajat">
+                      <span class="ptag ao">Järvinen, Paavo<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag ao">Heikkinen, Leena<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag ao">Leinonen, Mats<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää asianomistaja RV1:een...')">＋ Lisää asianomistaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Todistajat</div>
+                    <div class="person-tags" id="rv1-todistajat">
+                      <span class="ptag tod">Mäkinen, Esko<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää todistaja RV1:een...')">＋ Lisää todistaja</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Rikosnimike</div>
+              <div class="rv-value">
+                <div class="rn-block">
+                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
+                    <span class="rn-nimi">Törkeä petos</span><span class="rn-combo-caret">▾</span>
+                  </div>
+                  <span class="rn-pykala" contenteditable="true">rikoslaki 36 luku 2 § 1 momentti (769/1990)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Esitutkinnan nro</div>
+              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekoaika</div>
+              <div class="rv-value date-field" onclick="openDatePicker(this)">15.1.2024 – 20.3.2024</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekopaikka</div>
+              <div class="rv-value">
+                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
+                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
+              <div class="rv-value" contenteditable="true">Virtanen on tekoaikana 15.1.2024–20.3.2024 Helsingissä, toimiessaan XYZ Capital Oy:n toimitusjohtajana, hankkiakseen itselleen oikeudetonta taloudellista hyötyä erehdyttänyt asianomistajia Järvistä, Heikkistä ja Leinosta esittämällä totuudenvastaisia tietoja yhtiön taloudellisesta tilanteesta ja sijoitustuotoista. Virtanen on väittänyt yhtiön hallinnoivan sijoitusvarallisuutta noin 12 miljoonan euron arvosta ja luvannut 15 prosentin vuotuisen tuoton, vaikka todellisuudessa sijoituksia ei ole tehty ja varallisuus on käytetty Virtasen henkilökohtaisiin menoihin ja aiempien sijoittajien maksuihin.
+
+Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan varallisuuttaan yhtiölle yhteensä 850 000 euron arvosta. Teko on tehty erityisen suunnitelmallisesti käyttämällä valehenkilöllisyyksiä ja väärennettyä asiakirja-aineistoa ja petos on kohdistunut useisiin asianomistajiin sekä kokonaisuutena arvioiden erityisen arvokkaaseen omaisuuteen.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Riidattomat seikat</div>
+              <div class="rv-value" contenteditable="true">Virtanen on myöntänyt toimineensa XYZ Capital Oy:n toimitusjohtajana tekoaikana. Virtanen on myöntänyt vastaanottaneensa asianomistajilta yhteensä 850 000 euroa. Virtanen ei ole kiistänyt, ettei sijoitustoimintaa ole harjoitettu esitetyssä laajuudessa.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Kirjallinen todistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv1-kir">
+                  <li class="ev-item">
+                    <span class="ev-num">K1</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">XYZ Capital Oy:n kirjanpitodokumentit 1.1.2024–31.3.2024</span>
+                      <span class="ev-theme" contenteditable="true">Sijoitustoimintaa ei harjoitettu väitetyssä laajuudessa</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K2</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Sähköpostikirjeenvaihto Virtasen ja asianomistajien välillä 15.1.–18.3.2024</span>
+                      <span class="ev-theme" contenteditable="true">Asianomistajia erehdytettiin petollisilla sijoitusvakuutuksilla</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K3</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">XYZ Capital Oy:n sijoitusesite "Growth Fund 2024" (väärennetty)</span>
+                      <span class="ev-theme" contenteditable="true">Asianomistajille esitetyt tiedot olivat totuudenvastaisia</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K4</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Pankkitiliotteet, tili FI12 3456 7890 (Virtanen, tammi–maaliskuu 2024)</span>
+                      <span class="ev-theme" contenteditable="true">Virtanen vastaanotti 850 000 euroa asianomistajilta</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K5</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Kaupparekisteriote XYZ Capital Oy, 14.1.2024</span>
+                      <span class="ev-theme" contenteditable="true">Virtanen toimi yhtiön toimitusjohtajana ja käytti siinä määräysvaltaa</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                </ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv1-kir', 'K')">＋ Lisää kirjallinen todiste</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Henkilötodistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv1-htod">
+                  <li class="ev-item">
+                    <span class="ev-num">T1</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Asianomistaja Paavo Järvinen</span>
+                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">T2</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Asianomistaja Leena Heikkinen</span>
+                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">T3</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Asianomistaja Mats Leinonen</span>
+                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">T4</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Kirjanpitäjä Esko Mäkinen</span>
+                      <span class="ev-theme" contenteditable="true">Yhtiön todellinen taloudellinen tila ja sijoitustoiminnan puuttuminen</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                </ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv1-htod', 'T')">＋ Lisää henkilötodistaja</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Syyteoikeus</div>
+              <div class="rv-value" contenteditable="true">Syyte on nostettava kahden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            </div>
+
+          </div><!-- /rv-1-body -->
+        </div><!-- /rv-1 -->
+
+        <!-- RV 2: Väärennys -->
+        <div id="rv-2" class="rv-block" onclick="focusRV('rv-2')">
+          <div class="rv-head" onclick="toggleRV('rv-2-body', 'rv-2-icon'); event.stopPropagation()">
+            <div class="rv-head-title">
+              <div class="rv-head-main">
+                <span class="rv-head-num">2.</span>
+                <span class="rv-head-crime" id="rv-2-title">Väärennys</span>
+                <span class="rv-head-date" id="rv-2-date">15.1.2024</span>
+              </div>
+              <div class="rv-head-summary" id="rv-2-summary"></div>
+            </div>
+            <div class="rv-actions" onclick="event.stopPropagation()">
+              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta järjestetään...')">↕ Järjestä</button>
+              <button class="ca-btn del" onclick="removeRV('rv-2')">✕ Poista</button>
+            </div>
+            <span class="rv-toggle-icon" id="rv-2-icon">▼</span>
+          </div>
+
+          <div class="collapsible rv-body" id="rv-2-body" style="max-height: 2000px">
+
+            <div class="rv-field">
+              <div class="rv-label"></div>
+              <div class="rv-value">
+                <div class="rv-persons">
+                  <div>
+                    <div class="rv-psub-label">Vastaajat</div>
+                    <div class="person-tags" id="rv2-vastaajat">
+                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag">Sirpa Tuulikki Korhonen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää vastaaja RV2:een...')">＋ Lisää vastaaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Asianomistajat</div>
+                    <div class="person-tags" id="rv2-asianomistajat">
+                      <span class="ptag ao">Järvinen, Paavo<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag ao">Heikkinen, Leena<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag ao">Leinonen, Mats<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää asianomistaja RV2:een...')">＋ Lisää asianomistaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Todistajat</div>
+                    <div class="person-tags" id="rv2-todistajat">
+                      <span class="ptag tod">Saarinen, Jukka<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää todistaja RV2:een...')">＋ Lisää todistaja</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Rikosnimike</div>
+              <div class="rv-value">
+                <div class="rn-block">
+                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
+                    <span class="rn-nimi">Väärennys</span><span class="rn-combo-caret">▾</span>
+                  </div>
+                  <span class="rn-pykala" contenteditable="true">rikoslaki 33 luku 1 § (769/1990)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Esitutkinnan nro</div>
+              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekoaika</div>
+              <div class="rv-value date-field" onclick="openDatePicker(this)">15.1.2024</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekopaikka</div>
+              <div class="rv-value">
+                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
+                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
+              <div class="rv-value" contenteditable="true">Virtanen ja Korhonen ovat yhdessä 15.1.2024 Helsingissä väärentäneet XYZ Capital Oy:n sijoitusesitteen "Growth Fund 2024" lisäämällä siihen totuudenvastaisia tietoja yhtiön hallinnoiman varallisuuden määrästä ja sijoitustoiminnan tuloksista. Korhonen on teknisesti toteuttanut väärentämisen muokkaamalla alkuperäistä asiakirjaa Virtasen ohjeiden mukaisesti. Väärennettyä asiakirjaa on käytetty petollisessa menettelyssä asianomistajien erehdyttämiseen.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Kirjallinen todistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv2-kir">
+                  <li class="ev-item">
+                    <span class="ev-num">K6</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Alkuperäinen sijoitusesite "Growth Fund 2024" (aito versio)</span>
+                      <span class="ev-theme" contenteditable="true">Väärennetyn version poikkeamat ovat näkyvissä vertailussa</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K7</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Väärennetty sijoitusesite "Growth Fund 2024"</span>
+                      <span class="ev-theme" contenteditable="true">Asiakirja sisältää totuudenvastaisia tietoja varallisuuden määrästä ja tuotoista</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                  <li class="ev-item">
+                    <span class="ev-num">K8</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Digitaalinen forensiikkaraportti, Forensics Finland Oy 22.4.2024</span>
+                      <span class="ev-theme" contenteditable="true">Korhonen suoritti muokkauksen Virtasen ohjauksessa</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                </ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv2-kir', 'K')">＋ Lisää kirjallinen todiste</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Henkilötodistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv2-htod">
+                  <li class="ev-item">
+                    <span class="ev-num">T1</span>
+                    <div class="ev-content">
+                      <span class="ev-text" contenteditable="true">Asiantuntijatodistaja Jukka Saarinen, digitaalinen forensiikka</span>
+                      <span class="ev-theme" contenteditable="true">Asiakirjan muokkaushistoria, ajankohta ja tekijä ovat selvitettävissä</span>
+                    </div>
+                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+                  </li>
+                </ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv2-htod', 'T')">＋ Lisää henkilötodistaja</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Syyteoikeus</div>
+              <div class="rv-value" contenteditable="true">Syyte on nostettava viiden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            </div>
+
+          </div>
+        </div><!-- /rv-2 -->
+
+        <!-- RV 3: Petos (suppeampi) -->
+        <div id="rv-3" class="rv-block" onclick="focusRV('rv-3')">
+          <div class="rv-head" onclick="toggleRV('rv-3-body', 'rv-3-icon'); event.stopPropagation()">
+            <div class="rv-head-title">
+              <div class="rv-head-main">
+                <span class="rv-head-num">3.</span>
+                <span class="rv-head-crime" id="rv-3-title">Petos</span>
+                <span class="rv-head-date" id="rv-3-date">5.12.2023–14.1.2024</span>
+              </div>
+              <div class="rv-head-summary" id="rv-3-summary"></div>
+            </div>
+            <div class="rv-actions" onclick="event.stopPropagation()">
+              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta järjestetään...')">↕ Järjestä</button>
+              <button class="ca-btn del" onclick="removeRV('rv-3')">✕ Poista</button>
+            </div>
+            <span class="rv-toggle-icon collapsed" id="rv-3-icon">▼</span>
+          </div>
+
+          <div class="collapsible rv-body closed" id="rv-3-body" style="max-height: 2000px">
+
+            <div class="rv-field">
+              <div class="rv-label"></div>
+              <div class="rv-value">
+                <div class="rv-persons">
+                  <div>
+                    <div class="rv-psub-label">Vastaajat</div>
+                    <div class="person-tags" id="rv3-vastaajat">
+                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                      <span class="ptag">Aleksi Juhani Nieminen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
+                    </div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää vastaaja RV3:een...')">＋ Lisää vastaaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Asianomistajat</div>
+                    <div class="person-tags" id="rv3-asianomistajat"></div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää asianomistaja RV3:een...')">＋ Lisää asianomistaja</button>
+                  </div>
+                  <div>
+                    <div class="rv-psub-label">Todistajat</div>
+                    <div class="person-tags" id="rv3-todistajat"></div>
+                    <button class="add-ev-btn" onclick="showToast('Lisää todistaja RV3:een...')">＋ Lisää todistaja</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Rikosnimike</div>
+              <div class="rv-value">
+                <div class="rn-block">
+                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
+                    <span class="rn-nimi">Petos</span><span class="rn-combo-caret">▾</span>
+                  </div>
+                  <span class="rn-pykala" contenteditable="true">rikoslaki 36 luku 1 § (769/1990)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Esitutkinnan nro</div>
+              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekoaika</div>
+              <div class="rv-value date-field" onclick="openDatePicker(this)">5.12.2023 – 14.1.2024</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Tekopaikka</div>
+              <div class="rv-value">
+                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
+                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
+              <div class="rv-value empty-hint">Teonkuvaus puuttuu. Klikkaa kirjoittaaksesi.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Kirjallinen todistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv3-kir"></ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv3-kir', 'K')">＋ Lisää kirjallinen todiste</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Henkilötodistelu</div>
+              <div class="rv-value">
+                <ul class="ev-list" id="ev-rv3-htod"></ul>
+                <button class="add-ev-btn" onclick="addEvItem('ev-rv3-htod', 'T')">＋ Lisää henkilötodistaja</button>
+              </div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Syyteoikeus</div>
+              <div class="rv-value" contenteditable="true">Syyte on nostettava kahden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            </div>
+
+          </div>
+        </div><!-- /rv-3 -->
+
+        <!-- Add RV -->
+        <div class="add-row">
+          <div class="add-row-line"></div>
+          <button class="add-row-btn" onclick="addRV()">＋ Lisää rangaistusvaatimus</button>
+          <div class="add-row-line"></div>
+        </div>
+
+        <hr class="doc-hr" id="sec-muut">
+
+        <!-- MUUT VAATIMUKSET -->
+        <div class="doc-section">
+          <div class="ds-title">Muut vaatimukset</div>
+
+          <div id="muut-container">
+            <div class="empty-hint">Ei muita vaatimuksia. Klikkaa lisätäksesi.</div>
+          </div>
+
+          <button class="add-row-btn" style="margin-top:8px" onclick="addMuuVaatimus()">＋ Lisää muu vaatimus</button>
+        </div>
+
+        <hr class="doc-hr" id="sec-yksitoik">
+
+        <!-- YKSITYISOIKEUDELLISET VAATIMUKSET -->
+        <div class="doc-section">
+          <div class="ds-title">Yksityisoikeudelliset vaatimukset</div>
+
+          <div class="plain-block" id="yv-1">
+            <div class="pb-head" onclick="togglePB('yv-1-body', 'yv-1-tog')">
+              <span class="pb-title">Korvausvaatimus – Järvinen</span>
+              <span class="pb-toggle" id="yv-1-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body" id="yv-1-body" style="max-height: 500px">
+              <div contenteditable="true">Asianomistaja Paavo Järvinen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>200 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 15.1.2024 lukien.
+
+Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen aiheuttamaan taloudelliseen vahinkoon.</div>
+            </div>
+          </div>
+
+          <div class="plain-block" id="yv-2">
+            <div class="pb-head" onclick="togglePB('yv-2-body', 'yv-2-tog')">
+              <span class="pb-title">Korvausvaatimus – Heikkinen</span>
+              <span class="pb-toggle" id="yv-2-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body" id="yv-2-body" style="max-height: 500px">
+              <div contenteditable="true">Asianomistaja Leena Heikkinen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>350 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 22.1.2024 lukien.</div>
+            </div>
+          </div>
+
+          <div class="plain-block" id="yv-3">
+            <div class="pb-head" onclick="togglePB('yv-3-body', 'yv-3-tog')">
+              <span class="pb-title">Korvausvaatimus – Leinonen</span>
+              <span class="pb-toggle" id="yv-3-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body" id="yv-3-body" style="max-height: 500px">
+              <div contenteditable="true">Asianomistaja Mats Leinonen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>300 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 8.2.2024 lukien.</div>
+            </div>
+          </div>
+
+          <button class="add-row-btn" style="margin-top:4px" onclick="showToast('Lisää yksityisoikeudellinen vaatimus...')">＋ Lisää korvausvaatimus</button>
+        </div>
+
+        <hr class="doc-hr" id="sec-lisatiedot">
+
+        <!-- LISÄTIEDOT -->
+        <div class="doc-section">
+          <div class="ds-title">Lisätiedot</div>
+
+          <div class="plain-block">
+            <div class="pb-head" onclick="togglePB('li-1-body', 'li-1-tog')">
+              <span class="pb-title">Oikeuspaikkaa koskeva kannanotto</span>
+              <span class="pb-toggle" id="li-1-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body" id="li-1-body" style="max-height: 300px">
+              <div contenteditable="true">Asia kuuluu Helsingin käräjäoikeuden toimivaltaan, koska teot on tehty pääosin Helsingissä ja pääosa asianomistajista asuu Helsingissä.</div>
+            </div>
+          </div>
+
+          <div class="plain-block">
+            <div class="pb-head" onclick="togglePB('li-2-body', 'li-2-tog')">
+              <span class="pb-title">Seuraamuskannanotto</span>
+              <span class="pb-toggle" id="li-2-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body" id="li-2-body" style="max-height: 300px">
+              <div contenteditable="true">Syyttäjä vaatii Virtaselle ehdotonta vankeusrangaistusta rikoksen vakavuuden, suunnitelmallisuuden ja aiheutetun kokonaisvahingon (850 000 euroa) perusteella. Korhosen osalta syyttäjä vaatii ehdollista vankeusrangaistusta ottaen huomioon hänen avustajan roolensa ja nuorempi rikoshistoriansa.</div>
+            </div>
+          </div>
+
+          <div class="plain-block">
+            <div class="pb-head" onclick="togglePB('li-3-body', 'li-3-tog')">
+              <span class="pb-title">Muut lisätiedot</span>
+              <span class="pb-toggle collapsed" id="li-3-tog">▼</span>
+            </div>
+            <div class="collapsible pb-body closed" id="li-3-body" style="max-height: 300px">
+              <div contenteditable="true">Lisätiedot...</div>
+            </div>
+          </div>
+        </div>
+
+
+      </div><!-- /document -->
+    </div><!-- /document-wrapper -->
+
+  </main><!-- /main-area -->
+</div><!-- /app-body -->
+
+<!-- TUOMIOISTUININFO PANEL -->
+<div class="court-panel" id="court-panel">
+  <div class="cp-head">
+    <div>
+      <div class="cp-title">🔒 Tuomioistuininfo</div>
+      <div class="cp-sub">Vain tuomioistuimen käyttöön – ei julkinen</div>
+    </div>
+    <button class="cp-close" onclick="toggleCourtInfo()">✕</button>
+  </div>
+  <div class="cp-body">
+
+    <div class="cp-field">
+      <div class="cp-label">Istuntoehdotus</div>
+      <div class="cp-val" contenteditable="true">Pääkäsittely, arviolta 5 istuntopäivää. Ehdotetaan istuntoja marraskuulle 2025.</div>
+    </div>
+
+    <div class="cp-field">
+      <div class="cp-label">Todistajien yhteystiedot</div>
+      <div style="border: 1px solid var(--border); border-radius: 4px; overflow: hidden;">
+        <div class="cp-witness">
+          <div>
+            <div class="cp-wname">Paavo Järvinen</div>
+            <div class="cp-wdetail">040 123 4567 · paavo.jarvinen@email.fi</div>
+          </div>
+        </div>
+        <div class="cp-witness">
+          <div>
+            <div class="cp-wname">Leena Heikkinen</div>
+            <div class="cp-wdetail">044 234 5678 · leena.heikkinen@email.fi</div>
+          </div>
+        </div>
+        <div class="cp-witness">
+          <div>
+            <div class="cp-wname">Mats Leinonen</div>
+            <div class="cp-wdetail">050 345 6789 · mats.leinonen@email.fi</div>
+          </div>
+        </div>
+        <div class="cp-witness">
+          <div>
+            <div class="cp-wname">Esko Mäkinen (todistaja)</div>
+            <div class="cp-wdetail">040 456 7890 · esko.makinen@firma.fi</div>
+          </div>
+        </div>
+        <div class="cp-witness">
+          <div>
+            <div class="cp-wname">Jukka Saarinen (asiantuntija)</div>
+            <div class="cp-wdetail">050 567 8901 · jukka.saarinen@forensics.fi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cp-field">
+      <div class="cp-label">Huomiot tuomioistuimelle</div>
+      <div class="cp-val" contenteditable="true">Asianomistaja Järvisellä on todettu ahdistuneisuushäiriö – kuuleminen vaatii erityisjärjestelyjä. Pyydän mahdollisuutta kuulla häntä ensimmäisenä istuntopäivänä.</div>
+    </div>
+
+    <div style="margin-top: 10px;">
+      <button class="dt-btn purple" style="width:100%; justify-content:center" onclick="showToast('Tuomioistuininfo-PDF luodaan...')">📄 Luo Tuomioistuininfo-PDF</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- RIKOSNIMIKE DROPDOWN -->
+<div class="rn-dropdown" id="rn-dropdown">
+  <input type="text" id="rn-search" class="rn-search" placeholder="Hae rikosnimike…" oninput="rnFilter(this.value)" onkeydown="rnKey(event)">
+  <ul class="rn-list" id="rn-list"></ul>
+</div>
+
+<!-- DATE PICKER -->
+<div class="date-picker" id="date-picker">
+  <div class="dp-header">
+    <button class="dp-nav" onclick="dpNav(-1)">◀</button>
+    <span class="dp-month-label" id="dp-month-label"></span>
+    <button class="dp-nav" onclick="dpNav(1)">▶</button>
+  </div>
+  <div class="dp-weekdays">
+    <span class="dp-wd">Ma</span><span class="dp-wd">Ti</span><span class="dp-wd">Ke</span>
+    <span class="dp-wd">To</span><span class="dp-wd">Pe</span>
+    <span class="dp-wd weekend">La</span><span class="dp-wd weekend">Su</span>
+  </div>
+  <div class="dp-grid" id="dp-grid"></div>
+  <div class="dp-footer">
+    <span class="dp-selection" id="dp-selection"></span>
+    <button class="dp-clear" onclick="dpClear()">Tyhjennä</button>
+    <button class="dp-confirm" onclick="dpConfirm()">OK</button>
+  </div>
+</div>
+
+<script>
+  // ===== AUTOSAVE =====
+  let saveTimer = null;
+  const saveIndicator = () => document.getElementById('save-indicator');
+  const saveLabel    = () => document.getElementById('save-label');
+
+  function markDirty() {
+    const ind = saveIndicator();
+    if (!ind) return;
+    ind.className = 'save-indicator saving';
+    saveLabel().textContent = 'Tallennetaan…';
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      ind.className = 'save-indicator saved';
+      saveLabel().textContent = 'Tallennettu';
+      setTimeout(() => {
+        ind.className = 'save-indicator';
+      }, 3000);
+    }, 900);
+  }
+
+  // Listen for any edits in the document area
+  document.addEventListener('DOMContentLoaded', () => {
+    const doc = document.querySelector('.doc-paper');
+    if (doc) {
+      doc.addEventListener('input', markDirty);
+    }
+    // Catch select changes and ptag removals
+    document.addEventListener('change', e => {
+      if (e.target.closest('.doc-paper')) markDirty();
+    });
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('ptag-del') || e.target.classList.contains('ev-del')) {
+        setTimeout(markDirty, 0);
+      }
+    });
+    // Init RV3 as collapsed (starts closed in HTML)
+    const rv3 = document.getElementById('rv-3');
+    if (rv3) {
+      rv3.classList.add('rv-collapsed');
+      updateRVSummary('rv-3');
+    }
+  });
+
+  // ===== TOAST =====
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  // ===== SIDEBAR COLLAPSE =====
+  function toggleSb(id) {
+    const el = document.getElementById(id);
+    const tog = document.getElementById(id + '-toggle');
+    el.classList.toggle('closed');
+    tog.classList.toggle('collapsed');
+  }
+
+  // ===== RV COLLAPSE =====
+  function toggleRV(bodyId, iconId) {
+    const body = document.getElementById(bodyId);
+    const icon = document.getElementById(iconId);
+    body.classList.toggle('closed');
+    icon.classList.toggle('collapsed');
+    const rv = body.closest('.rv-block');
+    if (rv) {
+      const collapsed = body.classList.contains('closed');
+      rv.classList.toggle('rv-collapsed', collapsed);
+      if (collapsed) updateRVSummary(rv.id);
+    }
+  }
+
+  // ===== PLAIN BLOCK COLLAPSE =====
+  function togglePB(bodyId, togId) {
+    const body = document.getElementById(bodyId);
+    const tog = document.getElementById(togId);
+    body.classList.toggle('closed');
+    tog.classList.toggle('collapsed');
+  }
+
+  // ===== FOCUS RV =====
+  let focusedRV = null;
+  function focusRV(id) {
+    if (focusedRV && focusedRV !== id) {
+      document.getElementById(focusedRV).classList.remove('focused');
+    }
+    document.getElementById(id).classList.toggle('focused');
+    focusedRV = id;
+  }
+
+  // ===== EVIDENCE =====
+  function renumberKirjalliset() {
+    let counter = 1;
+    document.querySelectorAll('[id$="-kir"]').forEach(list => {
+      list.querySelectorAll('.ev-item').forEach(li => {
+        li.querySelector('.ev-num').textContent = 'K' + counter++;
+      });
+    });
+  }
+
+  function addEvItem(listId, prefix) {
+    const list = document.getElementById(listId);
+    const li = document.createElement('li');
+    li.className = 'ev-item';
+    const isKir = listId.endsWith('-kir');
+    li.innerHTML = `
+      <span class="ev-num">?</span>
+      <div class="ev-content">
+        <span class="ev-text" contenteditable="true">Uusi todiste...</span>
+        <span class="ev-theme" contenteditable="true">Teema</span>
+      </div>
+      <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
+    `;
+    list.appendChild(li);
+    markDirty();
+    if (isKir) renumberKirjalliset();
+    else {
+      // Renumber henkilötodistelu locally
+      const p = prefix || 'T';
+      list.querySelectorAll('.ev-item').forEach((item, i) => {
+        item.querySelector('.ev-num').textContent = p + (i + 1);
+      });
+    }
+    const text = li.querySelector('.ev-text');
+    text.focus();
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function removeEvItem(btn) {
+    const item = btn.closest('.ev-item');
+    const list = item.closest('.ev-list');
+    const isKir = list.id?.endsWith('-kir');
+    item.remove();
+    if (isKir) {
+      renumberKirjalliset();
+    } else {
+      list.querySelectorAll('.ev-item').forEach((li, i) => {
+        li.querySelector('.ev-num').textContent = 'T' + (i + 1);
+      });
+    }
+  }
+
+  // ===== ADD RV =====
+  let rvCount = 3;
+  function addRV() {
+    rvCount++;
+    const id = 'rv-' + rvCount;
+    const html = `
+    <div id="${id}" class="rv-block" onclick="focusRV('${id}')">
+      <div class="rv-head" onclick="toggleRV('${id}-body', '${id}-icon'); event.stopPropagation()">
+        <div class="rv-head-title">
+          <div class="rv-head-main">
+            <span class="rv-head-num">${rvCount}.</span>
+            <span class="rv-head-crime" id="${id}-title">Uusi vaatimus</span>
+            <span class="rv-head-date" id="${id}-date"></span>
+          </div>
+          <div class="rv-head-summary" id="${id}-summary"></div>
+        </div>
+        <div class="rv-actions" onclick="event.stopPropagation()">
+          <button class="ca-btn" onclick="showToast('Järjestä...')">↕ Järjestä</button>
+          <button class="ca-btn del" onclick="removeRV('${id}')">✕ Poista</button>
+        </div>
+        <span class="rv-toggle-icon" id="${id}-icon">▼</span>
+      </div>
+      <div class="collapsible rv-body" id="${id}-body" style="max-height: 2000px">
+        <div class="rv-field">
+          <div class="rv-label">Henkilöt</div>
+          <div class="rv-value">
+            <div class="rv-persons">
+              <div>
+                <div class="rv-psub-label">Vastaajat</div>
+                <div class="person-tags"></div>
+                <button class="add-ev-btn" onclick="showToast('Lisää vastaaja...')">＋ Lisää vastaaja</button>
+              </div>
+              <div>
+                <div class="rv-psub-label">Asianomistajat</div>
+                <div class="person-tags"></div>
+                <button class="add-ev-btn" onclick="showToast('Lisää asianomistaja...')">＋ Lisää asianomistaja</button>
+              </div>
+              <div>
+                <div class="rv-psub-label">Todistajat</div>
+                <div class="person-tags"></div>
+                <button class="add-ev-btn" onclick="showToast('Lisää todistaja...')">＋ Lisää todistaja</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Rikosnimike</div>
+          <div class="rv-value">
+            <div class="rn-block">
+              <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
+                <span class="rn-nimi">Rikosnimike</span><span class="rn-combo-caret">▾</span>
+              </div>
+              <span class="rn-pykala" contenteditable="true">rikoslaki luku § momentti</span>
+            </div>
+          </div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Esitutkinnan nro</div>
+          <div class="rv-value" contenteditable="true"></div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Tekoaika</div>
+          <div class="rv-value date-field" onclick="openDatePicker(this)"></div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Tekopaikka</div>
+          <div class="rv-value">
+            <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
+              <span class="rn-nimi">Paikkakunta</span><span class="rn-combo-caret">▾</span>
+            </div>
+          </div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Teonkuvaus</div>
+          <div class="rv-value" contenteditable="true">Kirjoita teonkuvaus tähän...</div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Riidattomat seikat</div>
+          <div class="rv-value" contenteditable="true">Riidattomat seikat...</div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Kirjallinen todistelu</div>
+          <div class="rv-value">
+            <ul class="ev-list" id="ev-${id}-kir"></ul>
+            <button class="add-ev-btn" onclick="addEvItem('ev-${id}-kir', 'K')">＋ Lisää kirjallinen todiste</button>
+          </div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Henkilötodistelu</div>
+          <div class="rv-value">
+            <ul class="ev-list" id="ev-${id}-htod"></ul>
+            <button class="add-ev-btn" onclick="addEvItem('ev-${id}-htod', 'T')">＋ Lisää henkilötodistaja</button>
+          </div>
+        </div>
+        <div class="rv-field">
+          <div class="rv-label">Syyteoikeus</div>
+          <div class="rv-value" contenteditable="true">Syyte on nostettava ... vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+        </div>
+      </div>
+    </div>`;
+
+    const addRow = document.querySelector('.add-row');
+    addRow.insertAdjacentHTML('beforebegin', html);
+
+    // Add to outline
+    const outline = document.getElementById('sb-outline');
+    const outlineItem = document.createElement('div');
+    outlineItem.className = 'outline-item';
+    outlineItem.setAttribute('onclick', `scrollToSection('${id}', this)`);
+    outlineItem.id = `oi-${id}`;
+    outlineItem.innerHTML = `
+      <span class="oi-badge">${rvCount}</span>
+      <span class="oi-rv-name">Uusi vaatimus</span>
+      <span class="oi-dot empty"></span>
+    `;
+    // Insert before Muut vaatimukset item
+    const muutItem = outline.querySelector('[onclick*="sec-muut"]');
+    outline.insertBefore(outlineItem, muutItem);
+
+    showToast(`Rangaistusvaatimus ${rvCount} lisätty`);
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function removeRV(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.opacity = '0';
+      el.style.maxHeight = el.offsetHeight + 'px';
+      el.style.transition = 'all 0.25s';
+      setTimeout(() => {
+        el.style.maxHeight = '0';
+        el.style.marginBottom = '0';
+        el.style.overflow = 'hidden';
+      }, 10);
+      setTimeout(() => { el.remove(); renumberKirjalliset(); }, 280);
+      showToast('Rangaistusvaatimus poistettu');
+    }
+  }
+
+  function removeEl(id, msg) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.transition = 'opacity 0.2s';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 200);
+      showToast(msg);
+    }
+  }
+
+  // ===== MUUT VAATIMUKSET =====
+  let muutCount = 0;
+  function addMuuVaatimus() {
+    muutCount++;
+    const container = document.getElementById('muut-container');
+    const empty = container.querySelector('.empty-hint');
+    if (empty) empty.remove();
+
+    const id = 'muut-' + muutCount;
+    const html = `
+    <div class="plain-block" id="${id}" style="margin-bottom:8px">
+      <div class="pb-head" onclick="togglePB('${id}-body', '${id}-tog')">
+        <div class="mv-combo" onclick="openMvCombo(this); event.stopPropagation()" tabindex="0">
+          <span class="pb-title rn-nimi">Valitse vaatimus…</span><span class="rn-combo-caret">▾</span>
+        </div>
+        <div onclick="event.stopPropagation(); removeEl('${id}', 'Vaatimus poistettu')" style="cursor:pointer; color:var(--muted); font-size:12px; padding: 0 4px;">✕</div>
+        <span class="pb-toggle" id="${id}-tog">▼</span>
+      </div>
+      <div class="collapsible pb-body" id="${id}-body" style="max-height:300px">
+        <div contenteditable="true">Vaatimuksen sisältö...</div>
+      </div>
+    </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    showToast('Muu vaatimus lisätty');
+  }
+
+  // ===== SCROLL TO SECTION =====
+  function offsetFromContainer(el, container) {
+    let top = 0;
+    let cur = el;
+    while (cur && cur !== container) {
+      top += cur.offsetTop;
+      cur = cur.offsetParent;
+    }
+    return top;
+  }
+
+  function scrollToSection(id, clickedEl) {
+    const el = document.getElementById(id);
+    const container = document.querySelector('.main-area');
+    if (el && container) {
+      const top = offsetFromContainer(el, container) - 16;
+      container.scrollTop = top;
+      el.style.transition = 'box-shadow 0.3s';
+      el.style.boxShadow = '0 0 0 3px rgba(59,130,246,0.35)';
+      setTimeout(() => { el.style.boxShadow = ''; }, 1500);
+    }
+    document.querySelectorAll('.outline-item').forEach(i => i.classList.remove('active'));
+    if (clickedEl) clickedEl.classList.add('active');
+  }
+
+  // ===== COURT INFO PANEL =====
+  function toggleCourtInfo() {
+    document.getElementById('court-panel').classList.toggle('visible');
+  }
+
+  // ===== AGE FROM FINNISH HENKILÖTUNNUS =====
+  function ageFromHetu(hetu) {
+    const m = hetu.match(/^(\d{2})(\d{2})(\d{2})([-+A])(\d{3}[A-Z0-9])$/i);
+    if (!m) return null;
+    const dd = parseInt(m[1]), mm = parseInt(m[2]), yy = parseInt(m[3]);
+    const sep = m[4];
+    const century = sep === '+' ? 1800 : sep === '-' ? 1900 : 2000;
+    const dob = new Date(century + yy, mm - 1, dd);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const mDiff = today.getMonth() - dob.getMonth();
+    if (mDiff < 0 || (mDiff === 0 && today.getDate() < dob.getDate())) age--;
+    return age;
+  }
+
+  function ageWarnHtml(age, role) {
+    if (role === 'vastaaja') {
+      if (age < 15) return '<span class="age-warn u15">⚠ Alle 15 v – ei rikosoikeudellista vastuuta</span>';
+      if (age < 18) return '<span class="age-warn u18">⚠ Alle 18 v – nuori rikoksentekijä</span>';
+      if (age < 21) return '<span class="age-warn u21">⚠ Alle 21 v – nuori aikuinen</span>';
+    } else if (role === 'asianomistaja') {
+      if (age < 18) return '<span class="age-warn u18">⚠ Alle 18 v – alaikäinen asianomistaja</span>';
+    }
+    return '';
+  }
+
+  // ===== SYNC RIKOSNIMIKE → header + sidebar =====
+  function syncRikosnimike(rvId, newName) {
+    const titleEl = document.getElementById(rvId + '-title');
+    if (titleEl) titleEl.textContent = newName;
+    const oiEl = document.querySelector('#oi-' + rvId + ' .oi-rv-name');
+    if (oiEl) oiEl.textContent = newName;
+    // Also update rv-head-sub in addRV-generated blocks
+    const rvEl = document.getElementById(rvId);
+  }
+
+  document.addEventListener('input', e => {
+    const el = e.target;
+    if (!el.classList.contains('rn-nimi')) return;
+    const rvBlock = el.closest('.rv-block');
+    if (!rvBlock) return;
+    syncRikosnimike(rvBlock.id, el.textContent.trim());
+  });
+
+  // ===== DATE PICKER =====
+  // ===== TEKOPAIKKA COMBO =====
+  const KUNNAT = [
+    // Ulkomaat (ensin)
+    'Ulkomaat', 'Ruotsi', 'Viro', 'Saksa', 'Britannia', 'Yhdysvallat', 'Ranska', 'Espanja', 'Norja', 'Tanska',
+    // Suomen kunnat aakkosjärjestyksessä
+    'Akaa','Alajärvi','Alavus','Asikkala','Askola','Espoo','Eura','Eurajoki',
+    'Haapajärvi','Haapavesi','Hamina','Hankasalmi','Hanko','Harjavalta','Hattula','Hausjärvi',
+    'Heinola','Heinävesi','Helsinki','Hollola','Huittinen','Hyvinkää','Hämeenkyrö','Hämeenlinna',
+    'Ii','Iisalmi','Iitti','Ikaalinen','Ilmajoki','Ilomantsi','Imatra','Inari','Inkoo',
+    'Janakkala','Joensuu','Jokioinen','Joroinen','Joutsa','Juuka','Juva',
+    'Jyväskylä','Jämsä','Järvenpää',
+    'Kaarina','Kajaani','Kalajoki','Kangasala','Kangasniemi','Kankaanpää','Kannus',
+    'Karkkila','Karstula','Kauhajoki','Kauhava','Kauniainen','Kaustinen','Kemi',
+    'Kemijärvi','Keminmaa','Kempele','Kerava','Keuruu','Kirkkonummi','Kitee',
+    'Kiuruvesi','Kokemäki','Kokkola','Kolari','Kontiolahti','Kotka','Kouvola',
+    'Kristiinankaupunki','Kuopio','Kurikka','Kuusamo',
+    'Lahti','Laihia','Laitila','Lapinlahti','Lappeenranta','Lapua','Laukaa',
+    'Lempäälä','Leppävirta','Lieksa','Lieto','Liminka','Liperi','Lohja','Loimaa',
+    'Loviisa',
+    'Maarianhamina','Mikkeli','Muhos','Muonio','Muurame','Mynämäki','Mäntsälä',
+    'Mänttä-Vilppula','Mäntyharju',
+    'Naantali','Nakkila','Nivala','Nokia','Nurmes','Nurmijärvi','Närpiö',
+    'Orimattila','Orivesi','Oulainen','Oulu','Outokumpu',
+    'Paimio','Paltamo','Parainen','Parkano','Pello','Pori','Pornainen','Porvoo',
+    'Posio','Pudasjärvi','Puolanka','Pyhäjärvi','Pälkäne',
+    'Raahe','Raasepori','Raisio','Rantasalmi','Ranua','Rauma','Rautalampi',
+    'Riihimäki','Ristijärvi','Rovaniemi','Ruovesi',
+    'Saarijärvi','Salla','Salo','Savonlinna','Seinäjoki','Siilinjärvi','Sipoo',
+    'Siuntio','Sodankylä','Somero','Sotkamo','Suomussalmi','Suonenjoki',
+    'Taipalsaari','Taivalkoski','Tampere','Tervola','Tornio','Turku','Tuusula',
+    'Vaasa','Valkeakoski','Varkaus','Viitasaari','Virrat',
+    'Ylitornio','Ylivieska','Ylöjärvi',
+    'Ähtäri','Äänekoski'
+  ];
+  const KUNNAT_DATA = KUNNAT.map(k => ({ nimi: k, pykala: '' }));
+
+  const MUUT_VAATIMUKSET = [
+    'Rikosuhrimaksu',
+    'Rikosesineen menettäminen valtiolle',
+    'Rikoksentekovälineen menettäminen valtiolle',
+    'Rikoksen tuottaman hyödyn menettäminen valtiolle',
+    'Laajennettu hyödyn menettäminen (konfiskaatio)',
+    'Liiketoimintakielto',
+    'Ajokielto',
+    'Lähestymiskielto',
+    'Oikeudenkäyntikulujen korvaaminen',
+    'Todistelukustannusten korvaaminen',
+    'Turvaamistoimi',
+    'Takavarikko',
+    'Yhteinen rangaistus',
+    'Yhdyskuntapalvelu',
+    'Valvontarangaistus',
+    'Nuorisorangaistus',
+    'Ehdollisen vankeuden valvonta',
+    'Päihdehoitoon määrääminen',
+    'Passin peruuttaminen',
+    'Matkustuskielto',
+  ];
+
+  function openMvCombo(el) {
+    rnMode = 'mv';
+    rnTarget = el;
+    const dd = document.getElementById('rn-dropdown');
+    const search = document.getElementById('rn-search');
+    search.value = '';
+    rnActive = -1;
+    rnFilterWith(MUUT_VAATIMUKSET.map(v => ({ nimi: v, pykala: '' })), '');
+    const rect = el.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 4) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.classList.add('open');
+    search.focus();
+  }
+
+  function openTpCombo(el) {
+    rnMode = 'tp';
+    rnTarget = el;
+    const dd = document.getElementById('rn-dropdown');
+    const search = document.getElementById('rn-search');
+    search.value = '';
+    rnActive = -1;
+    rnFilterWith(KUNNAT_DATA, '');
+    const rect = el.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 4) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.classList.add('open');
+    search.focus();
+  }
+
+  // ===== RV HEAD SUMMARY =====
+  function updateRVSummary(rvId) {
+    const rv = document.getElementById(rvId);
+    if (!rv) return;
+    const summary = rv.querySelector('.rv-head-summary');
+    if (!summary) return;
+    const chips = [];
+    rv.querySelectorAll('[id$="-vastaajat"] .ptag').forEach(p => {
+      const name = p.childNodes[0].textContent.trim();
+      chips.push(`<span class="ptag ptag-sm">${name}</span>`);
+    });
+    rv.querySelectorAll('[id$="-asianomistajat"] .ptag').forEach(p => {
+      const name = p.childNodes[0].textContent.trim();
+      chips.push(`<span class="ptag ao ptag-sm">${name}</span>`);
+    });
+    summary.innerHTML = chips.join('');
+  }
+
+  // ===== RIKOSNIMIKE COMBO =====
+  const RIKOSNIMIKKEET = [
+    // Henkeen ja terveyteen
+    { nimi: 'Tappo',                                    pykala: 'rikoslaki 21 luku 1 §' },
+    { nimi: 'Murha',                                    pykala: 'rikoslaki 21 luku 2 §' },
+    { nimi: 'Pahoinpitely',                             pykala: 'rikoslaki 21 luku 5 §' },
+    { nimi: 'Törkeä pahoinpitely',                      pykala: 'rikoslaki 21 luku 6 §' },
+    { nimi: 'Lievä pahoinpitely',                       pykala: 'rikoslaki 21 luku 7 §' },
+    { nimi: 'Kuolemantuottamus',                        pykala: 'rikoslaki 21 luku 8 §' },
+    { nimi: 'Törkeä kuolemantuottamus',                 pykala: 'rikoslaki 21 luku 9 §' },
+    { nimi: 'Vammantuottamus',                          pykala: 'rikoslaki 21 luku 10 §' },
+    { nimi: 'Törkeä vammantuottamus',                   pykala: 'rikoslaki 21 luku 11 §' },
+    { nimi: 'Vaaran aiheuttaminen',                     pykala: 'rikoslaki 21 luku 13 §' },
+    // Seksuaalirikokset
+    { nimi: 'Raiskaus',                                 pykala: 'rikoslaki 20 luku 1 §' },
+    { nimi: 'Törkeä raiskaus',                          pykala: 'rikoslaki 20 luku 2 §' },
+    { nimi: 'Seksuaalinen ahdistelu',                   pykala: 'rikoslaki 20 luku 5 a §' },
+    { nimi: 'Seksuaalirikos lasta vastaan',             pykala: 'rikoslaki 20 luku 6 §' },
+    // Vapauteen kohdistuvat
+    { nimi: 'Vapaudenriisto',                           pykala: 'rikoslaki 25 luku 1 §' },
+    { nimi: 'Törkeä vapaudenriisto',                    pykala: 'rikoslaki 25 luku 2 §' },
+    { nimi: 'Ihmiskauppa',                              pykala: 'rikoslaki 25 luku 3 §' },
+    { nimi: 'Törkeä ihmiskauppa',                       pykala: 'rikoslaki 25 luku 3 a §' },
+    { nimi: 'Laiton uhkaus',                            pykala: 'rikoslaki 25 luku 7 §' },
+    { nimi: 'Pakottaminen',                             pykala: 'rikoslaki 25 luku 8 §' },
+    // Omaisuusrikokset
+    { nimi: 'Varkaus',                                  pykala: 'rikoslaki 28 luku 1 §' },
+    { nimi: 'Törkeä varkaus',                           pykala: 'rikoslaki 28 luku 2 §' },
+    { nimi: 'Näpistys',                                 pykala: 'rikoslaki 28 luku 3 §' },
+    { nimi: 'Kavallus',                                 pykala: 'rikoslaki 28 luku 4 §' },
+    { nimi: 'Törkeä kavallus',                          pykala: 'rikoslaki 28 luku 5 §' },
+    { nimi: 'Lievä kavallus',                           pykala: 'rikoslaki 28 luku 6 §' },
+    { nimi: 'Luvaton käyttö',                           pykala: 'rikoslaki 28 luku 7 §' },
+    { nimi: 'Ryöstö',                                   pykala: 'rikoslaki 31 luku 1 §' },
+    { nimi: 'Törkeä ryöstö',                            pykala: 'rikoslaki 31 luku 2 §' },
+    { nimi: 'Kiristys',                                 pykala: 'rikoslaki 31 luku 3 §' },
+    { nimi: 'Vahingonteko',                             pykala: 'rikoslaki 35 luku 1 §' },
+    { nimi: 'Törkeä vahingonteko',                      pykala: 'rikoslaki 35 luku 2 §' },
+    { nimi: 'Lievä vahingonteko',                       pykala: 'rikoslaki 35 luku 3 §' },
+    // Petokset ja väärennykset
+    { nimi: 'Petos',                                    pykala: 'rikoslaki 36 luku 1 §' },
+    { nimi: 'Törkeä petos',                             pykala: 'rikoslaki 36 luku 2 §' },
+    { nimi: 'Lievä petos',                              pykala: 'rikoslaki 36 luku 3 §' },
+    { nimi: 'Vakuutuspetos',                            pykala: 'rikoslaki 36 luku 4 §' },
+    { nimi: 'Luottamusaseman väärinkäyttö',             pykala: 'rikoslaki 36 luku 5 §' },
+    { nimi: 'Väärennys',                                pykala: 'rikoslaki 33 luku 1 §' },
+    { nimi: 'Törkeä väärennys',                         pykala: 'rikoslaki 33 luku 2 §' },
+    { nimi: 'Lievä väärennys',                          pykala: 'rikoslaki 33 luku 3 §' },
+    { nimi: 'Maksuvälinepetos',                         pykala: 'rikoslaki 37 luku 8 §' },
+    { nimi: 'Törkeä maksuvälinepetos',                  pykala: 'rikoslaki 37 luku 9 §' },
+    // Talousrikokset
+    { nimi: 'Veropetos',                                pykala: 'rikoslaki 29 luku 1 §' },
+    { nimi: 'Törkeä veropetos',                         pykala: 'rikoslaki 29 luku 2 §' },
+    { nimi: 'Lievä veropetos',                          pykala: 'rikoslaki 29 luku 3 §' },
+    { nimi: 'Verorikkomus',                             pykala: 'rikoslaki 29 luku 4 §' },
+    { nimi: 'Avustuspetos',                             pykala: 'rikoslaki 29 luku 5 §' },
+    { nimi: 'Törkeä avustuspetos',                      pykala: 'rikoslaki 29 luku 6 §' },
+    { nimi: 'Kirjanpitorikos',                          pykala: 'rikoslaki 30 luku 9 §' },
+    { nimi: 'Törkeä kirjanpitorikos',                   pykala: 'rikoslaki 30 luku 9 a §' },
+    { nimi: 'Velallisen petos',                         pykala: 'rikoslaki 39 luku 2 §' },
+    { nimi: 'Törkeä velallisen petos',                  pykala: 'rikoslaki 39 luku 3 §' },
+    { nimi: 'Velallisen vilpillisyys',                  pykala: 'rikoslaki 39 luku 1 §' },
+    { nimi: 'Rahanpesu',                                pykala: 'rikoslaki 32 luku 6 §' },
+    { nimi: 'Törkeä rahanpesu',                         pykala: 'rikoslaki 32 luku 7 §' },
+    { nimi: 'Sisäpiiritiedon väärinkäyttö',             pykala: 'rikoslaki 51 luku 1 §' },
+    { nimi: 'Arvopaperimarkkinarikos',                  pykala: 'rikoslaki 51 luku 3 §' },
+    // Huumerikokset
+    { nimi: 'Huumausainerikos',                         pykala: 'rikoslaki 50 luku 1 §' },
+    { nimi: 'Törkeä huumausainerikos',                  pykala: 'rikoslaki 50 luku 2 §' },
+    { nimi: 'Huumausaineen käyttörikos',                pykala: 'rikoslaki 50 luku 2 a §' },
+    { nimi: 'Huumausainerikoksen valmistelu',           pykala: 'rikoslaki 50 luku 3 §' },
+    // Liikennerikokset
+    { nimi: 'Liikenneturvallisuuden vaarantaminen',     pykala: 'rikoslaki 23 luku 1 §' },
+    { nimi: 'Törkeä liikenneturvallisuuden vaarantaminen', pykala: 'rikoslaki 23 luku 2 §' },
+    { nimi: 'Rattijuopumus',                            pykala: 'rikoslaki 23 luku 3 §' },
+    { nimi: 'Törkeä rattijuopumus',                     pykala: 'rikoslaki 23 luku 4 §' },
+    { nimi: 'Kulkuneuvon kuljettaminen oikeudetta',     pykala: 'rikoslaki 23 luku 10 §' },
+    // Virkarikokset ja lahjusrikokset
+    { nimi: 'Lahjuksen ottaminen',                      pykala: 'rikoslaki 40 luku 1 §' },
+    { nimi: 'Törkeä lahjuksen ottaminen',               pykala: 'rikoslaki 40 luku 2 §' },
+    { nimi: 'Lahjuksen antaminen',                      pykala: 'rikoslaki 16 luku 13 §' },
+    { nimi: 'Törkeä lahjuksen antaminen',               pykala: 'rikoslaki 16 luku 14 §' },
+    { nimi: 'Virka-aseman väärinkäyttäminen',           pykala: 'rikoslaki 40 luku 7 §' },
+    // Muut
+    { nimi: 'Kunnianloukkaus',                          pykala: 'rikoslaki 24 luku 9 §' },
+    { nimi: 'Törkeä kunnianloukkaus',                   pykala: 'rikoslaki 24 luku 10 §' },
+    { nimi: 'Kotirauhan rikkominen',                    pykala: 'rikoslaki 24 luku 1 §' },
+    { nimi: 'Törkeä kotirauhan rikkominen',             pykala: 'rikoslaki 24 luku 2 §' },
+    { nimi: 'Viestintäsalaisuuden loukkaus',            pykala: 'rikoslaki 38 luku 3 §' },
+    { nimi: 'Tietomurto',                               pykala: 'rikoslaki 38 luku 8 §' },
+    { nimi: 'Törkeä tietomurto',                        pykala: 'rikoslaki 38 luku 8 a §' },
+    { nimi: 'Perätön lausuma tuomioistuimessa',         pykala: 'rikoslaki 15 luku 1 §' },
+    { nimi: 'Tuhotyö',                                  pykala: 'rikoslaki 34 luku 1 §' },
+  ];
+
+  let rnTarget = null;
+  let rnFiltered = [];
+  let rnActive = -1;
+  let rnMode = 'rn';
+
+  function openRnCombo(comboEl) {
+    rnMode = 'rn';
+    rnTarget = comboEl;
+    const dd = document.getElementById('rn-dropdown');
+    const search = document.getElementById('rn-search');
+    search.value = '';
+    rnActive = -1;
+    rnFilterWith(RIKOSNIMIKKEET, '');
+    const rect = comboEl.getBoundingClientRect();
+    dd.style.top = (rect.bottom + 4) + 'px';
+    dd.style.left = rect.left + 'px';
+    dd.classList.add('open');
+    search.focus();
+  }
+
+  function rnFilter(q) {
+    let data;
+    if (rnMode === 'tp') data = KUNNAT_DATA;
+    else if (rnMode === 'mv') data = MUUT_VAATIMUKSET.map(v => ({ nimi: v, pykala: '' }));
+    else data = RIKOSNIMIKKEET;
+    rnFilterWith(data, q);
+  }
+
+  function rnFilterWith(data, q) {
+    const ul = document.getElementById('rn-list');
+    const lower = q.toLowerCase();
+    rnFiltered = q ? data.filter(r =>
+      r.nimi.toLowerCase().includes(lower)
+    ) : data;
+    rnActive = -1;
+    if (rnFiltered.length === 0) {
+      ul.innerHTML = '<li class="rn-list-empty">Ei tuloksia</li>';
+      return;
+    }
+    ul.innerHTML = rnFiltered.map((r, i) =>
+      `<li onclick="rnSelect(${i})" onmouseover="rnHighlight(${i})">
+        <div class="rn-list-nimi">${r.nimi}</div>
+        ${r.pykala ? `<div class="rn-list-pykala">${r.pykala}</div>` : ''}
+      </li>`
+    ).join('');
+  }
+
+  function rnHighlight(i) {
+    rnActive = i;
+    document.querySelectorAll('#rn-list li').forEach((li, idx) =>
+      li.classList.toggle('rn-active', idx === i)
+    );
+  }
+
+  function rnSelect(i) {
+    const r = rnFiltered[i];
+    if (!r || !rnTarget) return;
+    const nimi = rnTarget.querySelector('.rn-nimi');
+    if (nimi) nimi.textContent = r.nimi;
+    if (rnMode === 'rn') {
+      const block = rnTarget.closest('.rn-block');
+      if (block) {
+        const pykala = block.querySelector('.rn-pykala');
+        if (pykala) pykala.textContent = r.pykala;
+      }
+      const rvBlock = rnTarget.closest('.rv-block');
+      if (rvBlock) syncRikosnimike(rvBlock.id, r.nimi);
+    }
+    markDirty();
+    rnClose();
+  }
+
+  function rnKey(e) {
+    const items = document.querySelectorAll('#rn-list li:not(.rn-list-empty)');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      rnActive = Math.min(rnActive + 1, items.length - 1);
+      rnHighlight(rnActive);
+      items[rnActive]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      rnActive = Math.max(rnActive - 1, 0);
+      rnHighlight(rnActive);
+      items[rnActive]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+      if (rnActive >= 0) rnSelect(rnActive);
+    } else if (e.key === 'Escape') {
+      rnClose();
+    }
+  }
+
+  function rnClose() {
+    document.getElementById('rn-dropdown').classList.remove('open');
+    rnTarget = null;
+  }
+
+  document.addEventListener('mousedown', e => {
+    const dd = document.getElementById('rn-dropdown');
+    if (dd.classList.contains('open') && !dd.contains(e.target) && !e.target.closest('.rn-combo')) {
+      rnClose();
+    }
+  });
+
+  // ===== DATE PICKER =====
+  const FI_MONTHS = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu',
+                     'Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
+
+  let dpTarget = null, dpStart = null, dpEnd = null, dpHover = null;
+  let dpYear = 2024, dpMonth = 0;
+
+  function parseFiDate(s) {
+    const p = s.trim().split('.');
+    if (p.length < 3) return null;
+    const d = parseInt(p[0]), m = parseInt(p[1]), y = parseInt(p[2]);
+    if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+    return new Date(y, m - 1, d);
+  }
+
+  function fmtFi(date) {
+    if (!date) return '';
+    return `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}`;
+  }
+
+  function dpDateEq(a, b) {
+    return a && b && a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  }
+
+  function dpDateBetween(d, a, b) {
+    if (!a || !b) return false;
+    const [lo, hi] = a <= b ? [a, b] : [b, a];
+    return d > lo && d < hi;
+  }
+
+  function dpRenderGrid() {
+    document.getElementById('dp-month-label').textContent = `${FI_MONTHS[dpMonth]} ${dpYear}`;
+    const grid = document.getElementById('dp-grid');
+    grid.innerHTML = '';
+    const first = new Date(dpYear, dpMonth, 1);
+    const last = new Date(dpYear, dpMonth + 1, 0);
+    // Monday-first offset
+    let startDow = (first.getDay() + 6) % 7;
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    for (let i = 0; i < startDow; i++) {
+      const prev = new Date(dpYear, dpMonth, 1 - (startDow - i));
+      grid.appendChild(dpCell(prev, true));
+    }
+    for (let d = 1; d <= last.getDate(); d++) {
+      grid.appendChild(dpCell(new Date(dpYear, dpMonth, d), false));
+    }
+    const remaining = 7 - ((startDow + last.getDate()) % 7);
+    if (remaining < 7) {
+      for (let d = 1; d <= remaining; d++) {
+        grid.appendChild(dpCell(new Date(dpYear, dpMonth + 1, d), true));
+      }
+    }
+
+    const sel = document.getElementById('dp-selection');
+    if (dpStart && dpEnd) {
+      sel.textContent = fmtFi(dpStart) + ' – ' + fmtFi(dpEnd);
+    } else if (dpStart) {
+      sel.textContent = fmtFi(dpStart);
+    } else {
+      sel.textContent = '';
+    }
+  }
+
+  function dpCell(date, otherMonth) {
+    const span = document.createElement('span');
+    span.className = 'dp-day';
+    span.textContent = date.getDate();
+    if (otherMonth) span.classList.add('other-month');
+
+    const today = new Date(); today.setHours(0,0,0,0);
+    if (dpDateEq(date, today)) span.classList.add('today');
+
+    const dow = date.getDay();
+    if (dow === 0 || dow === 6) span.classList.add('weekend-day');
+
+    const hi = dpHover || dpEnd;
+    const [lo, loEnd] = dpStart && hi && dpStart > hi ? [hi, dpStart] : [dpStart, hi];
+
+    if (dpDateEq(date, dpStart)) span.classList.add('range-start');
+    if (dpDateEq(date, dpEnd)) span.classList.add('range-end');
+    if (lo && loEnd && date > lo && date < loEnd) span.classList.add('in-range');
+    if (dpStart && !dpEnd && dpDateEq(date, dpHover)) span.classList.add('range-end');
+
+    span.addEventListener('click', () => dpClickDay(date));
+    span.addEventListener('mouseenter', () => { dpHover = date; dpRenderGrid(); });
+    return span;
+  }
+
+  function dpClickDay(date) {
+    if (!dpStart || (dpStart && dpEnd)) {
+      dpStart = date; dpEnd = null;
+    } else {
+      if (dpDateEq(date, dpStart)) {
+        dpEnd = null;
+        dpConfirm();
+        return;
+      }
+      dpEnd = date < dpStart ? (dpStart = date, dpStart) : date;
+      if (date < dpStart) { dpEnd = dpStart; dpStart = date; }
+    }
+    dpRenderGrid();
+  }
+
+  function dpNav(dir) {
+    dpMonth += dir;
+    if (dpMonth > 11) { dpMonth = 0; dpYear++; }
+    if (dpMonth < 0) { dpMonth = 11; dpYear--; }
+    dpRenderGrid();
+  }
+
+  function dpClear() {
+    dpStart = null; dpEnd = null; dpHover = null;
+    if (dpTarget) dpTarget.textContent = '';
+    dpClose();
+  }
+
+  function dpConfirm() {
+    if (dpTarget && dpStart) {
+      dpTarget.textContent = dpEnd ? fmtFi(dpStart) + ' – ' + fmtFi(dpEnd) : fmtFi(dpStart);
+      markDirty();
+      const rv = dpTarget.closest('.rv-block');
+      if (rv) {
+        const dateSpan = rv.querySelector('.rv-head-date');
+        if (dateSpan) dateSpan.textContent = dpTarget.textContent;
+      }
+    }
+    dpClose();
+  }
+
+  function dpClose() {
+    document.getElementById('date-picker').classList.remove('visible');
+    dpTarget = null; dpHover = null;
+  }
+
+  function openDatePicker(el) {
+    dpTarget = el;
+    const val = el.textContent.trim();
+    const parts = val.split('–').map(s => s.trim());
+    dpStart = parseFiDate(parts[0]);
+    dpEnd = parts[1] ? parseFiDate(parts[1]) : null;
+    dpHover = null;
+    if (dpStart) { dpYear = dpStart.getFullYear(); dpMonth = dpStart.getMonth(); }
+    else { dpYear = 2024; dpMonth = 0; }
+
+    const picker = document.getElementById('date-picker');
+    const rect = el.getBoundingClientRect();
+    picker.style.top = (rect.bottom + 4) + 'px';
+    picker.style.left = Math.min(rect.left, window.innerWidth - 280) + 'px';
+    picker.classList.add('visible');
+    dpRenderGrid();
+  }
+
+  document.addEventListener('click', e => {
+    const picker = document.getElementById('date-picker');
+    if (!picker.classList.contains('visible')) return;
+    if (!picker.contains(e.target) && !e.target.closest('.date-field')) dpClose();
+  });
+
+  // ===== INIT =====
+  renumberKirjalliset();
+  // Make the "teonkuvaus puuttuu" placeholder clear on click
+  document.querySelectorAll('.empty-hint').forEach(el => {
+    if (el.closest('.rv-field')) {
+      el.addEventListener('click', function() {
+        this.textContent = '';
+        this.contentEditable = 'true';
+        this.classList.remove('empty-hint');
+        this.focus();
+      });
+    }
+  });
+
+  // Keyboard shortcut: Ctrl+S to save
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      showToast('Tallennettu ✓');
+    }
+  });
+
+</script>
+</body>
+</html>

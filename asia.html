@@ -175,6 +175,149 @@
     .tl-date { font-size: 11px; color: var(--muted); white-space: nowrap; width: 90px; flex-shrink: 0; }
     .tl-text { font-size: 12px; color: var(--text); }
     .tl-sub  { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ===== SYYTEHARKINTA ===== */
+    .sh-status-bar {
+      display: flex;
+      gap: 20px;
+      padding: 10px 16px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 14px;
+    }
+    .sh-status-item { display: flex; align-items: center; gap: 6px; }
+    .sh-status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .sh-status-dot.avoinna { background: #94a3b8; }
+    .sh-status-dot.hh  { background: #3b82f6; }
+    .sh-status-dot.sjp { background: #f59e0b; }
+    .sh-status-num   { font-weight: 700; font-size: 13px; color: var(--navy); }
+    .sh-status-label { font-size: 12px; color: var(--muted); }
+
+    .sh-section {
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+    .sh-section-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .sh-section-head.avoinna { background: #f8f9fb; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .sh-section-head.hh  { background: #eff6ff; color: #1e40af; border-bottom: 1px solid #bfdbfe; }
+    .sh-section-head.sjp { background: #fffbeb; color: #92400e; border-bottom: 1px solid #fde68a; }
+    .sh-section-badge {
+      min-width: 18px; height: 18px;
+      border-radius: 4px;
+      font-size: 9.5px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 4px;
+    }
+    .sh-section-head.avoinna .sh-section-badge { background: #94a3b8; color: white; }
+    .sh-section-head.hh  .sh-section-badge { background: #3b82f6; color: white; }
+    .sh-section-head.sjp .sh-section-badge { background: #f59e0b; color: white; }
+    .sh-section-spacer { flex: 1; }
+    .sh-section-del {
+      background: none; border: none; cursor: pointer;
+      font-size: 11px; padding: 2px 6px; border-radius: 3px;
+      color: var(--muted); font-family: inherit;
+    }
+    .sh-section-del:hover { background: #fee2e2; color: #dc2626; }
+
+    .sh-charge-group { border-bottom: 1px solid var(--border); }
+    .sh-charge-group:last-child { border-bottom: none; }
+    .sh-charge-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f8f9fb;
+      border-bottom: 1px solid var(--border);
+    }
+    .sh-ch-num {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      background: var(--navy);
+      color: white;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sh-def-row {
+      display: flex;
+      align-items: center;
+      padding: 7px 14px 7px 42px;
+      gap: 12px;
+      border-bottom: 1px solid #f0f2f5;
+    }
+    .sh-def-row:last-child { border-bottom: none; }
+
+    .sh-vrow-main { flex: 1; min-width: 0; }
+    .sh-vrow-nimike { font-size: 12px; font-weight: 600; color: var(--navy); }
+    .sh-vrow-laki {
+      font-size: 9.5px; color: var(--muted);
+      background: #eef0f4; padding: 1px 6px;
+      border-radius: 8px; margin-left: 5px;
+    }
+    .sh-vrow-vastaaja { font-size: 11.5px; color: var(--text); }
+    .sh-move-select {
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 11px; font-family: inherit;
+      color: var(--text); background: white;
+      cursor: pointer; outline: none;
+      max-width: 180px;
+    }
+    .sh-move-select:focus { border-color: var(--active-border); }
+    .sh-charge-select { font-size: 11px; font-weight: 600; }
+
+    .sh-section-empty {
+      padding: 16px;
+      font-size: 11.5px;
+      color: #cbd5e1;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .sh-add-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .sh-add-btn {
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      font-size: 12px; font-weight: 500;
+      cursor: pointer;
+      border: 1px dashed var(--border);
+      background: white; color: var(--muted);
+      font-family: inherit; transition: all 0.15s;
+    }
+    .sh-add-btn.hh:hover  { border-color: #3b82f6; color: #1e40af; background: #eff6ff; }
+    .sh-add-btn.sjp:hover { border-color: #f59e0b; color: #92400e; background: #fffbeb; }
+
+    .sh-bucket-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      background: #fafbfc;
+    }
+    .sh-bucket-action {
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+      display: inline-flex; align-items: center;
+    }
+    .sh-bucket-action.hh  { background: var(--navy); color: white; border: 1px solid var(--navy); }
+    .sh-bucket-action.hh:hover  { background: var(--navy-mid); }
+    .sh-bucket-action.sjp { background: white; color: var(--text); border: 1px solid var(--border); }
+    .sh-bucket-action.sjp:hover { border-color: var(--navy); color: var(--navy); }
   </style>
 </head>
 <body>
@@ -182,9 +325,11 @@
 <!-- NAVBAR -->
 <nav class="navbar">
   <a href="index.html" class="navbar-brand">
-    <span class="brand-badge">STP</span>
+
     Syyttäjän työpöytä
   </a>
+  <div class="nb-sep"></div>
+  <a href="index.html" class="nb-btn nb-btn-ghost">← Työjono</a>
   <div class="nb-sep"></div>
   <span class="navbar-case-id">R 24/2847</span>
   <span class="navbar-case-desc">– Petos ja väärennys (Virtanen ym.)</span>
@@ -194,7 +339,6 @@
     <span class="save-dot"></span>
     <span id="save-label">Tallennettu</span>
   </span>
-  <button class="nb-btn nb-btn-solid" onclick="showToast('Hyväksytty ✓')">✅ Hyväksy</button>
 </nav>
 
 <!-- APP BODY -->
@@ -311,7 +455,7 @@
 
     <!-- Tab bar -->
     <div class="tab-bar">
-      <div class="tab active" onclick="switchTab('haastehakemus', this)">Haastehakemus</div>
+      <div class="tab active" onclick="switchTab('syyteharkinta', this)">Syyteharkinta</div>
       <div class="tab" onclick="switchTab('kirjelmat', this)">Kirjelmät</div>
       <div class="tab" onclick="switchTab('asiakirjat', this)">Asiakirjat</div>
       <div class="tab" onclick="switchTab('historia', this)">Historia</div>
@@ -319,36 +463,9 @@
 
     <div style="padding: 24px 28px 40px;">
 
-      <!-- HAASTEHAKEMUS TAB -->
-      <div id="tab-haastehakemus" class="tab-content active">
-
-        <div class="completeness-widget">
-          <span class="cw-label">Valmiusaste</span>
-          <div class="cw-track"><div class="cw-fill"></div></div>
-          <span class="cw-pct">68 %</span>
-          <a href="haastehakemus.html" class="doc-card-btn primary" style="text-decoration:none">Muokkaa haastehakemusta →</a>
-        </div>
-
-        <div class="doc-card">
-          <div class="doc-card-icon">📄</div>
-          <div class="doc-card-main">
-            <div class="doc-card-title">Haastehakemus</div>
-            <div class="doc-card-meta">3 rangaistusvaatimusta · Muokattu tänään 11:32</div>
-          </div>
-          <span class="doc-card-status luonnos">Luonnos</span>
-          <a href="haastehakemus.html" class="doc-card-btn" style="text-decoration:none">Avaa →</a>
-        </div>
-
-        <div class="doc-card" style="opacity:0.6;">
-          <div class="doc-card-icon">🔒</div>
-          <div class="doc-card-main">
-            <div class="doc-card-title">Tuomioistuininfo</div>
-            <div class="doc-card-meta">Ei julkinen · Päivitetty 25.6.2025</div>
-          </div>
-          <span class="doc-card-status valmis">Valmis</span>
-          <button class="doc-card-btn" onclick="showToast('Tuomioistuininfo avautuu...')">Avaa →</button>
-        </div>
-
+      <!-- SYYTEHARKINTA TAB -->
+      <div id="tab-syyteharkinta" class="tab-content active">
+        <div id="sh-root"></div>
       </div>
 
       <!-- KIRJELMÄT TAB -->
@@ -467,6 +584,158 @@
     if (tog) tog.classList.toggle('collapsed');
   }
 
+  // ===== SYYTEHARKINTA DATA =====
+  var SH_CHARGES = [
+    { id: 'c1', num: 1, nimike: 'Törkeä petos',  aika: '1.1.2023–31.12.2023', paikka: 'Helsinki' },
+    { id: 'c2', num: 2, nimike: 'Väärennys',     aika: '15.3.2023',           paikka: 'Helsinki' },
+    { id: 'c3', num: 3, nimike: 'Laiton uhkaus', aika: '4.11.2023',           paikka: 'Espoo'    },
+  ];
+  var SH_VAATIMUKSET = [
+    { id: 'v1a', charge: 'c1', vastaaja: 'Virtanen, Markku Aleksi',  hetu: '150380-1234 · 45 v' },
+    { id: 'v1b', charge: 'c1', vastaaja: 'Korhonen, Sirpa Tuulikki', hetu: '220685-5678 · 40 v' },
+    { id: 'v2a', charge: 'c2', vastaaja: 'Virtanen, Markku Aleksi',  hetu: '150380-1234 · 45 v' },
+    { id: 'v2b', charge: 'c2', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
+    { id: 'v3a', charge: 'c3', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
+  ];
+  var shBuckets  = [];
+  var shAssign   = {};  // vaatimusId -> bucketId | ''
+  var shNextId   = 1;
+
+  function shAddBucket(type) {
+    var hhN  = shBuckets.filter(function(b){ return b.type === 'hh';  }).length + 1;
+    var sjpN = shBuckets.filter(function(b){ return b.type === 'sjp'; }).length + 1;
+    var label = type === 'hh' ? 'Haastehakemus ' + hhN : 'SJP ' + sjpN;
+    shBuckets.push({ id: 'b' + shNextId++, type: type, label: label });
+    shRender();
+  }
+
+  function shDeleteBucket(id) {
+    SH_VAATIMUKSET.forEach(function(v){ if (shAssign[v.id] === id) shAssign[v.id] = ''; });
+    shBuckets = shBuckets.filter(function(b){ return b.id !== id; });
+    shRender();
+  }
+
+  function shMoveCharge(chargeId, targetId) {
+    if (targetId === '__new_hh__' || targetId === '__new_sjp__') {
+      var type = targetId === '__new_hh__' ? 'hh' : 'sjp';
+      var hhN  = shBuckets.filter(function(b){ return b.type === 'hh';  }).length + 1;
+      var sjpN = shBuckets.filter(function(b){ return b.type === 'sjp'; }).length + 1;
+      var label = type === 'hh' ? 'Haastehakemus ' + hhN : 'SJP ' + sjpN;
+      var newId = 'b' + shNextId++;
+      shBuckets.push({ id: newId, type: type, label: label });
+      targetId = newId;
+    }
+    SH_VAATIMUKSET.forEach(function(v){
+      if (v.charge === chargeId) shAssign[v.id] = targetId;
+    });
+    shRender();
+  }
+
+  function shMove(vaatimusId, targetId) {
+    if (targetId === '__new_hh__' || targetId === '__new_sjp__') {
+      var type = targetId === '__new_hh__' ? 'hh' : 'sjp';
+      var hhN  = shBuckets.filter(function(b){ return b.type === 'hh';  }).length + 1;
+      var sjpN = shBuckets.filter(function(b){ return b.type === 'sjp'; }).length + 1;
+      var label = type === 'hh' ? 'Haastehakemus ' + hhN : 'SJP ' + sjpN;
+      var newId = 'b' + shNextId++;
+      shBuckets.push({ id: newId, type: type, label: label });
+      shAssign[vaatimusId] = newId;
+    } else {
+      shAssign[vaatimusId] = targetId;
+    }
+    shRender();
+  }
+
+  function shRender() {
+    var root = document.getElementById('sh-root');
+    if (!root) return;
+
+    var unassigned = SH_VAATIMUKSET.filter(function(v){ return !shAssign[v.id]; });
+    var hhCount  = SH_VAATIMUKSET.filter(function(v){
+      var b = shBuckets.find(function(b){ return b.id === shAssign[v.id]; });
+      return b && b.type === 'hh';
+    }).length;
+    var sjpCount = SH_VAATIMUKSET.filter(function(v){
+      var b = shBuckets.find(function(b){ return b.id === shAssign[v.id]; });
+      return b && b.type === 'sjp';
+    }).length;
+
+    function selectOpts(currentId) {
+      var o = '<option value="">— Kohdistamattomat —</option>';
+      if (shBuckets.length) o += '<option disabled>──────────</option>';
+      shBuckets.forEach(function(b){
+        o += '<option value="' + b.id + '"' + (currentId === b.id ? ' selected' : '') + '>' + b.label + '</option>';
+      });
+      o += '<option disabled>──────────</option>';
+      o += '<option value="__new_hh__">＋ Luo uusi haastehakemus</option>';
+      o += '<option value="__new_sjp__">＋ Luo uusi SJP</option>';
+      return o;
+    }
+
+    function defRowHtml(v) {
+      var cur = shAssign[v.id] || '';
+      return '<div class="sh-def-row">' +
+        '<div class="sh-vrow-main">' +
+          '<div class="sh-vrow-vastaaja">' + v.vastaaja + ' · ' + v.hetu + '</div>' +
+        '</div>' +
+        '<select class="sh-move-select" onchange="shMove(\'' + v.id + '\',this.value)">' + selectOpts(cur) + '</select>' +
+      '</div>';
+    }
+
+    function groupedItemsHtml(items) {
+      var chargeIds = [];
+      items.forEach(function(v){ if (chargeIds.indexOf(v.charge) === -1) chargeIds.push(v.charge); });
+      return chargeIds.map(function(cid) {
+        var c = SH_CHARGES.find(function(x){ return x.id === cid; });
+        var rows = items.filter(function(v){ return v.charge === cid; });
+        var curId = shAssign[rows[0].id] || '';
+        return '<div class="sh-charge-group">' +
+          '<div class="sh-charge-head">' +
+            '<span class="sh-ch-num">' + c.num + '</span>' +
+            '<span class="sh-vrow-nimike">' + c.nimike + '</span>' +
+            '<span class="sh-vrow-laki">' + c.aika + ' · ' + c.paikka + '</span>' +
+            '<span class="sh-section-spacer"></span>' +
+            '<select class="sh-move-select sh-charge-select" onchange="shMoveCharge(\'' + cid + '\',this.value)">' + selectOpts(curId) + '</select>' +
+          '</div>' +
+          rows.map(defRowHtml).join('') +
+        '</div>';
+      }).join('');
+    }
+
+    var html = '';
+
+    // Kohdistamattomat
+    if (unassigned.length > 0) {
+      html += '<div class="sh-section"><div class="sh-section-head avoinna">' +
+        'Kohdistamattomat' +
+        '</div>' + groupedItemsHtml(unassigned) + '</div>';
+    }
+
+    // Buckets
+    shBuckets.forEach(function(b){
+      var items = SH_VAATIMUKSET.filter(function(v){ return shAssign[v.id] === b.id; });
+      var actionBtn = b.type === 'hh'
+        ? '<a href="haastehakemus.html" class="sh-bucket-action hh" style="text-decoration:none">Avaa haastehakemus →</a>'
+        : '<a href="#" class="sh-bucket-action hh" style="text-decoration:none" onclick="showToast(\'SJP-luonnos avataan...\');return false">Avaa SJP →</a>';
+      html += '<div class="sh-section"><div class="sh-section-head ' + b.type + '">' +
+        b.label +
+        '<span class="sh-section-spacer"></span>' +
+        '<button class="sh-section-del" onclick="shDeleteBucket(\'' + b.id + '\')">✕ Poista</button>' +
+        '</div>' +
+        (items.length ? groupedItemsHtml(items) : '<div class="sh-section-empty">Ei vielä nimikkeitä</div>') +
+        '<div class="sh-bucket-footer">' + actionBtn + '</div>' +
+      '</div>';
+    });
+
+    // Add buttons
+    html += '<div class="sh-add-row">' +
+      '<button class="sh-add-btn hh"  onclick="shAddBucket(\'hh\')">＋ Lisää haastehakemus</button>' +
+      '<button class="sh-add-btn sjp" onclick="shAddBucket(\'sjp\')">＋ Lisää SJP</button>' +
+    '</div>';
+
+    root.innerHTML = html;
+  }
+
   // Tab switching
   function switchTab(name, el) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -529,6 +798,8 @@
       `
     }
   };
+
+  shRender();
 </script>
 </body>
 </html>

@@ -944,6 +944,8 @@
       white-space: nowrap;
       transition: all 0.15s;
     }
+    .magic-btn { border-style: solid; border-color: #c4b5fd; color: #6d28d9; background: #faf5ff; }
+    .magic-btn:hover { border-color: #7c3aed; color: #5b21b6; background: #ede9fe; }
     .add-row-btn:hover {
       border-color: var(--active-border);
       color: var(--active-border);
@@ -1273,8 +1275,8 @@
     ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
     /* Collapsible */
-    .collapsible { overflow: hidden; transition: max-height 0.25s ease, opacity 0.2s; }
-    .collapsible.closed { max-height: 0 !important; opacity: 0; }
+    .collapsible { overflow: hidden; transition: max-height 0.25s ease, opacity 0.2s, padding 0.25s; }
+    .collapsible.closed { max-height: 0 !important; opacity: 0; padding-top: 0 !important; padding-bottom: 0 !important; }
 
     /* Empty placeholder */
     .empty-hint {
@@ -1286,6 +1288,20 @@
       font-style: italic;
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
+    }
+    [contenteditable][data-placeholder]:empty {
+      padding: 10px 13px;
+      border: 1px dashed var(--border);
+      border-radius: 3px;
+      font-size: 10pt;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+    }
+    [contenteditable][data-placeholder]:empty::before {
+      content: attr(data-placeholder);
+      color: var(--muted);
+      font-style: italic;
+      pointer-events: none;
     }
 
   </style>
@@ -1968,7 +1984,7 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
 
             <div class="rv-field">
               <div class="rv-label">Riidattomat seikat</div>
-              <div class="rv-value" contenteditable="true"></div>
+              <div class="rv-value" contenteditable="true" data-placeholder="Riidattomat seikat puuttuvat. Klikkaa kirjoittaaksesi."></div>
             </div>
 
             <div class="rv-field">
@@ -2011,7 +2027,11 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
             <div class="empty-hint">Ei muita vaatimuksia. Klikkaa lisätäksesi.</div>
           </div>
 
-          <button class="add-row-btn" style="margin-top:8px" onclick="addMuuVaatimus()">＋ Lisää muu vaatimus</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+            <button class="add-row-btn" onclick="addMuuVaatimus()">＋ Lisää muu vaatimus</button>
+            <button class="add-row-btn magic-btn" onclick="autoRikosuhrimaksut()">✨ Lisää rikosuhrimaksut</button>
+            <button class="add-row-btn magic-btn" onclick="autoTodistelukustannukset()">✨ Lisää todistelukustannukset</button>
+          </div>
         </div>
 
         <hr class="doc-hr" id="sec-yksitoik">
@@ -2424,7 +2444,7 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
         </div>
         <div class="rv-field">
           <div class="rv-label">Riidattomat seikat</div>
-          <div class="rv-value" contenteditable="true">Riidattomat seikat...</div>
+          <div class="rv-value" contenteditable="true" data-placeholder="Riidattomat seikat puuttuvat. Klikkaa kirjoittaaksesi."></div>
         </div>
         <div class="rv-field">
           <div class="rv-label">Kirjallinen todistelu</div>
@@ -2518,6 +2538,103 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
     </div>`;
     container.insertAdjacentHTML('beforeend', html);
     showToast('Muu vaatimus lisätty');
+  }
+
+  // ===== MAGIC BUTTONS =====
+
+  function getPtagName(ptag) {
+    return Array.from(ptag.childNodes)
+      .filter(n => n.nodeType === Node.TEXT_NODE)
+      .map(n => n.textContent.trim())
+      .join('').trim();
+  }
+
+  function fiGenitive(name) {
+    // Last word carries the genitive suffix
+    const parts = name.split(' ');
+    const last = parts[parts.length - 1];
+    let gen;
+    if (/nen$/i.test(last)) {
+      gen = last.slice(0, -3) + 'sen';
+    } else if (/[aeiouäöyAEIOUÄÖY]$/.test(last)) {
+      gen = last + 'n';
+    } else {
+      gen = last + 'in';
+    }
+    return [...parts.slice(0, -1), gen].join(' ');
+  }
+
+  function addGeneratedMuuVaatimus(title, content) {
+    muutCount++;
+    const container = document.getElementById('muut-container');
+    const empty = container.querySelector('.empty-hint');
+    if (empty) empty.remove();
+    const id = 'muut-' + muutCount;
+    const html = `
+    <div class="plain-block" id="${id}" style="margin-bottom:8px">
+      <div class="pb-head" onclick="togglePB('${id}-body', '${id}-tog')">
+        <div class="mv-combo" onclick="openMvCombo(this); event.stopPropagation()" tabindex="0">
+          <span class="pb-title rn-nimi">${title}</span><span class="rn-combo-caret">▾</span>
+        </div>
+        <div onclick="event.stopPropagation(); removeEl('${id}', 'Vaatimus poistettu')" style="cursor:pointer; color:var(--muted); font-size:12px; padding: 0 4px;">✕</div>
+        <span class="pb-toggle" id="${id}-tog">▼</span>
+      </div>
+      <div class="collapsible pb-body" id="${id}-body" style="max-height:300px">
+        <div contenteditable="true">${content}</div>
+      </div>
+    </div>`;
+    container.insertAdjacentHTML('beforeend', html);
+    markDirty();
+  }
+
+  function autoRikosuhrimaksut() {
+    // Collect unique defendant names across all RV blocks
+    const seen = new Set();
+    const names = [];
+    document.querySelectorAll('[id$="-vastaajat"] .ptag').forEach(p => {
+      const name = getPtagName(p);
+      if (name && !seen.has(name)) { seen.add(name); names.push(name); }
+    });
+    if (!names.length) { showToast('Ei vastaajia – lisää vastaajat ensin'); return; }
+    names.forEach(name => {
+      addGeneratedMuuVaatimus('Rikosuhrimaksu',
+        `${fiGenitive(name)} tulee suorittaa valtiolle rikosuhrimaksu 120 euroa.`);
+    });
+    showToast(`✨ Lisätty ${names.length} rikosuhrimaksu`);
+    scrollToSection('sec-muut', null);
+  }
+
+  function autoTodistelukustannukset() {
+    // Find RV blocks that have henkilötodistelu entries
+    const vastaajatPerRv = [];
+    document.querySelectorAll('.rv-block').forEach(rv => {
+      const htodList = rv.querySelector('[id$="-htod"]');
+      if (!htodList || !htodList.querySelector('.ev-item')) return;
+      const names = [];
+      rv.querySelectorAll('[id$="-vastaajat"] .ptag').forEach(p => {
+        const name = getPtagName(p);
+        if (name) names.push(name);
+      });
+      if (names.length) vastaajatPerRv.push(names);
+    });
+
+    if (!vastaajatPerRv.length) { showToast('Ei henkilötodistelua – lisää todistajat ensin'); return; }
+
+    // Collect all unique defendants linked to RVs with htod
+    const seen = new Set();
+    const allNames = [];
+    vastaajatPerRv.flat().forEach(n => { if (!seen.has(n)) { seen.add(n); allNames.push(n); } });
+
+    let content;
+    if (allNames.length === 1) {
+      content = `${fiGenitive(allNames[0])} on velvoitettava korvaamaan valtiolle todistelukustannukset.`;
+    } else {
+      const jointly = allNames.join(' ja ') + ' yhteisvastuullisesti';
+      content = `${jointly} on velvoitettava korvaamaan valtiolle todistelukustannukset.`;
+    }
+    addGeneratedMuuVaatimus('Todistelukustannusten korvaaminen', content);
+    showToast('✨ Todistelukustannukset lisätty');
+    scrollToSection('sec-muut', null);
   }
 
   // ===== SCROLL TO SECTION =====

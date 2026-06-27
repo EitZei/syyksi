@@ -1448,9 +1448,9 @@
     Syyttäjän työpöytä
   </a>
   <div class="nb-sep"></div>
-  <a href="asia.html" class="nb-btn nb-btn-ghost">← R 24/2847</a>
+  <a href="asia.html" class="nb-btn nb-btn-ghost" id="hh-back-btn">← Asia</a>
   <div class="nb-sep"></div>
-  <span style="color:white;font-size:12px;font-weight:600">Haastehakemus</span>
+  <span style="color:white;font-size:12px;font-weight:600" id="hh-title">Haastehakemus</span>
   <span class="navbar-spacer"></span>
   <span class="status-chip">Luonnos</span>
   <span class="save-indicator" id="save-indicator">
@@ -1477,22 +1477,7 @@
           <span class="sb-toggle" id="sb-outline-toggle">▼</span>
         </div>
         <div class="collapsible sb-content" id="sb-outline" style="max-height:400px">
-
-          <div class="outline-item" id="oi-rv-1" onclick="scrollToSection('rv-1', this)">
-            <span class="oi-badge">1</span>
-            <span class="oi-rv-name">Törkeä petos</span>
-            <span class="oi-dot ok"></span>
-          </div>
-          <div class="outline-item" id="oi-rv-2" onclick="scrollToSection('rv-2', this)">
-            <span class="oi-badge">2</span>
-            <span class="oi-rv-name">Väärennys</span>
-            <span class="oi-dot partial"></span>
-          </div>
-          <div class="outline-item" id="oi-rv-3" onclick="scrollToSection('rv-3', this)">
-            <span class="oi-badge">3</span>
-            <span class="oi-rv-name">Petos</span>
-            <span class="oi-dot partial"></span>
-          </div>
+          <div id="sb-outline-charges"></div>
           <div class="outline-item" onclick="scrollToSection('sec-muut', this)">
             <span class="oi-badge">M</span>
             <span>Muut vaatimukset</span>
@@ -1519,148 +1504,9 @@
           <span class="sb-toggle" id="sb-henkilot-toggle">▼</span>
         </div>
         <div class="collapsible sb-content" id="sb-henkilot" style="max-height:2000px">
+          <div id="sb-henkilot-content"></div>
 
-          <div class="subsec-label">Vastaajat</div>
-
-          <div class="vastaaja-card" id="v-1">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name">1. Virtanen, Markku Aleksi</div>
-                <div class="vc-meta">150380-1234 · 45 v · Mannerheimintie 45 B 12, 00100 Helsinki</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip" title="Rangaistusvaatimus 1">1</span>
-                <span class="rv-chip" title="Rangaistusvaatimus 2">2</span>
-                <span class="rv-chip" title="Rangaistusvaatimus 3">3</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('v-1', 'Vastaaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="vastaaja-card" id="v-2">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name">2. Korhonen, Sirpa Tuulikki</div>
-                <div class="vc-meta">220685-5678 · 40 v · Espoonkatu 8 A 3, 02100 Espoo</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip" title="Rangaistusvaatimus 2">2</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('v-2', 'Vastaaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="vastaaja-card" id="v-3">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name">3. Nieminen, Aleksi Juhani</div>
-                <div class="vc-meta">120708A5555 · 16 v · Hämeentie 12 A 1, 00530 Helsinki</div>
-                <span class="age-warn u18" style="margin-top:4px; display:inline-flex">⚠ Alle 18 v – nuori rikoksentekijä</span>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip" title="Rangaistusvaatimus 3">3</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa vastaajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('v-3', 'Vastaaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="subsec-label" style="margin-top:14px">Asianomistajat</div>
-
-          <div class="vastaaja-card" id="ao-1" style="background: #fefcf0; border-color: #e9d8a6;">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name" style="color: #78350f;">Järvinen, Paavo</div>
-                <div class="vc-meta">260170-2222 · 55 v</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('ao-1', 'Asianomistaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="vastaaja-card" id="ao-2" style="background: #fefcf0; border-color: #e9d8a6;">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name" style="color: #78350f;">Heikkinen, Leena</div>
-                <div class="vc-meta">150882-3333 · 42 v</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('ao-2', 'Asianomistaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="vastaaja-card" id="ao-3" style="background: #fefcf0; border-color: #e9d8a6;">
-            <div class="vc-row">
-              <div>
-                <div class="vc-name" style="color: #78350f;">Leinonen, Mats</div>
-                <div class="vc-meta">010390-4444 · 35 v</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip ao" title="Rangaistusvaatimus 1">1</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa asianomistajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('ao-3', 'Asianomistaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="subsec-label" style="margin-top:12px" id="sec-todistajat">Todistajat</div>
-
-          <div class="todistaja-card" id="tod-1">
-            <div class="vc-row">
-              <div>
-                <div class="tc-name">Mäkinen, Esko</div>
-                <div class="tc-meta">Todistaja · kirjanpitäjä, Kirjanpitotoimisto Laskentapalvelu Oy</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip tod" title="Rangaistusvaatimus 1">1</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa todistajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('tod-1', 'Todistaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div class="todistaja-card" id="tod-2">
-            <div class="vc-row">
-              <div>
-                <div class="tc-name">Saarinen, Jukka</div>
-                <div class="tc-meta">Asiantuntijatodistaja · digitaalinen forensiikka, Forensics Finland Oy</div>
-              </div>
-              <div class="vc-chips">
-                <span class="rv-chip tod" title="Rangaistusvaatimus 2">2</span>
-              </div>
-            </div>
-            <div class="card-actions">
-              <button class="ca-btn" onclick="showToast('Muokkaa todistajaa...')">✏ Muokkaa</button>
-              <button class="ca-btn del" onclick="removeEl('tod-2', 'Todistaja poistettu')">✕ Poista</button>
-            </div>
-          </div>
-
-          <div style="margin-top:8px">
-            <button class="ca-btn" onclick="showToast('Lisää henkilö...')" style="width:100%; justify-content:center">＋ Lisää henkilö</button>
-          </div>
-
+          <div style="display:none" id="v-1">
         </div>
       </div>
 
@@ -1694,7 +1540,7 @@
         <div class="doc-meta">
           <div class="dm-row">
             <span class="dm-key">Diaarinumero</span>
-            <span class="dm-val">R 24/2847</span>
+            <span class="dm-val" id="hh-diaarinumero">R 24/2847</span>
           </div>
           <div class="dm-row">
             <span class="dm-key">Päiväys</span>
@@ -1733,419 +1579,7 @@
         </div>
 
         <!-- ASIANOSAISET -->
-        <!-- RV 1: Törkeä petos -->
-        <div id="rv-1" class="rv-block" onclick="focusRV('rv-1')">
-          <div class="rv-head" onclick="toggleRV('rv-1-body', 'rv-1-icon'); event.stopPropagation()">
-            <div class="rv-head-title">
-              <div class="rv-head-main">
-                <span class="rv-head-num">1.</span>
-                <div class="rv-head-combo" onclick="openRvHeaderCombo(this); event.stopPropagation()" tabindex="0">
-                  <span class="rv-head-crime" id="rv-1-title">Törkeä petos</span><span class="rn-combo-caret">▾</span>
-                </div>
-                <span class="rv-head-date" id="rv-1-date">15.1.2024–20.3.2024</span>
-              </div>
-              <div class="rv-head-summary" id="rv-1-summary"></div>
-            </div>
-            <div class="rv-actions" onclick="event.stopPropagation()">
-              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta muokataan...')">↕ Järjestä</button>
-              <button class="ca-btn del" onclick="removeRV('rv-1')">✕ Poista</button>
-            </div>
-            <span class="rv-toggle-icon" id="rv-1-icon">▼</span>
-          </div>
-
-          <div class="collapsible rv-body" id="rv-1-body" style="max-height: 2000px">
-
-            <div class="rv-field">
-              <div class="rv-label"></div>
-              <div class="rv-value">
-                <div class="rv-persons">
-                  <div>
-                    <div class="rv-psub-label">Vastaajat</div>
-                    <div class="person-tags" id="rv1-vastaajat">
-                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää vastaaja RV1:een...')" title="Lisää vastaaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Asianomistajat</div>
-                    <div class="person-tags" id="rv1-asianomistajat">
-                      <span class="ptag ao">Järvinen, Paavo<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag ao">Heikkinen, Leena<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag ao">Leinonen, Mats<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää asianomistaja RV1:een...')" title="Lisää asianomistaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Todistajat</div>
-                    <div class="person-tags" id="rv1-todistajat">
-                      <span class="ptag tod">Mäkinen, Esko<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää todistaja RV1:een...')" title="Lisää todistaja">＋</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Esitutkinta</div>
-              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Aika ja paikka</div>
-              <div class="rv-value rv-inline-row">
-                <span class="date-field" onclick="openDatePicker(this)">15.1.2024 – 20.3.2024</span>
-                <span class="rv-inline-sep">·</span>
-                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
-                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
-              <div class="rv-value" contenteditable="true">Virtanen on tekoaikana 15.1.2024–20.3.2024 Helsingissä, toimiessaan XYZ Capital Oy:n toimitusjohtajana, hankkiakseen itselleen oikeudetonta taloudellista hyötyä erehdyttänyt asianomistajia Järvistä, Heikkistä ja Leinosta esittämällä totuudenvastaisia tietoja yhtiön taloudellisesta tilanteesta ja sijoitustuotoista. Virtanen on väittänyt yhtiön hallinnoivan sijoitusvarallisuutta noin 12 miljoonan euron arvosta ja luvannut 15 prosentin vuotuisen tuoton, vaikka todellisuudessa sijoituksia ei ole tehty ja varallisuus on käytetty Virtasen henkilökohtaisiin menoihin ja aiempien sijoittajien maksuihin.
-
-Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan varallisuuttaan yhtiölle yhteensä 850 000 euron arvosta. Teko on tehty erityisen suunnitelmallisesti käyttämällä valehenkilöllisyyksiä ja väärennettyä asiakirja-aineistoa ja petos on kohdistunut useisiin asianomistajiin sekä kokonaisuutena arvioiden erityisen arvokkaaseen omaisuuteen.</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Riidattomat seikat</div>
-              <div class="rv-value" contenteditable="true">Virtanen on myöntänyt toimineensa XYZ Capital Oy:n toimitusjohtajana tekoaikana. Virtanen on myöntänyt vastaanottaneensa asianomistajilta yhteensä 850 000 euroa. Virtanen ei ole kiistänyt, ettei sijoitustoimintaa ole harjoitettu esitetyssä laajuudessa.</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Kirjallinen todistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv1-kir">
-                  <li class="ev-item">
-                    <span class="ev-num">1</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">XYZ Capital Oy:n kirjanpitodokumentit 1.1.2024–31.3.2024</span>
-                      <span class="ev-theme" contenteditable="true">Sijoitustoimintaa ei harjoitettu väitetyssä laajuudessa</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">2</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Sähköpostikirjeenvaihto Virtasen ja asianomistajien välillä 15.1.–18.3.2024</span>
-                      <span class="ev-theme" contenteditable="true">Asianomistajia erehdytettiin petollisilla sijoitusvakuutuksilla</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">3</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">XYZ Capital Oy:n sijoitusesite "Growth Fund 2024" (väärennetty)</span>
-                      <span class="ev-theme" contenteditable="true">Asianomistajille esitetyt tiedot olivat totuudenvastaisia</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">4</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Pankkitiliotteet, tili FI12 3456 7890 (Virtanen, tammi–maaliskuu 2024)</span>
-                      <span class="ev-theme" contenteditable="true">Virtanen vastaanotti 850 000 euroa asianomistajilta</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">5</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Kaupparekisteriote XYZ Capital Oy, 14.1.2024</span>
-                      <span class="ev-theme" contenteditable="true">Virtanen toimi yhtiön toimitusjohtajana ja käytti siinä määräysvaltaa</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                </ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv1-kir', 'K')">＋ Lisää kirjallinen todiste</button>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Henkilötodistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv1-htod">
-                  <li class="ev-item">
-                    <span class="ev-num">1</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Asianomistaja Paavo Järvinen</span>
-                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">2</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Asianomistaja Leena Heikkinen</span>
-                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">3</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Asianomistaja Mats Leinonen</span>
-                      <span class="ev-theme" contenteditable="true">Sai petolliset sijoituslupaukset ja luovutti varoja yhtiölle</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">4</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Kirjanpitäjä Esko Mäkinen</span>
-                      <span class="ev-theme" contenteditable="true">Yhtiön todellinen taloudellinen tila ja sijoitustoiminnan puuttuminen</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                </ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv1-htod', 'T')">＋ Lisää henkilötodistaja</button>
-              </div>
-            </div>
-
-            <div class="rv-add-section-row">
-              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
-            </div>
-
-          </div><!-- /rv-1-body -->
-        </div><!-- /rv-1 -->
-
-        <!-- RV 2: Väärennys -->
-        <div id="rv-2" class="rv-block" onclick="focusRV('rv-2')">
-          <div class="rv-head" onclick="toggleRV('rv-2-body', 'rv-2-icon'); event.stopPropagation()">
-            <div class="rv-head-title">
-              <div class="rv-head-main">
-                <span class="rv-head-num">2.</span>
-                <div class="rv-head-combo" onclick="openRvHeaderCombo(this); event.stopPropagation()" tabindex="0">
-                  <span class="rv-head-crime" id="rv-2-title">Väärennys</span><span class="rn-combo-caret">▾</span>
-                </div>
-                <span class="rv-head-date" id="rv-2-date">15.1.2024</span>
-              </div>
-              <div class="rv-head-summary" id="rv-2-summary"></div>
-            </div>
-            <div class="rv-actions" onclick="event.stopPropagation()">
-              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta järjestetään...')">↕ Järjestä</button>
-              <button class="ca-btn del" onclick="removeRV('rv-2')">✕ Poista</button>
-            </div>
-            <span class="rv-toggle-icon" id="rv-2-icon">▼</span>
-          </div>
-
-          <div class="collapsible rv-body" id="rv-2-body" style="max-height: 2000px">
-
-            <div class="rv-field">
-              <div class="rv-label"></div>
-              <div class="rv-value">
-                <div class="rv-persons">
-                  <div>
-                    <div class="rv-psub-label">Vastaajat</div>
-                    <div class="person-tags" id="rv2-vastaajat">
-                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag">Sirpa Tuulikki Korhonen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää vastaaja RV2:een...')" title="Lisää vastaaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Asianomistajat</div>
-                    <div class="person-tags" id="rv2-asianomistajat">
-                      <span class="ptag ao">Järvinen, Paavo<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag ao">Heikkinen, Leena<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag ao">Leinonen, Mats<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää asianomistaja RV2:een...')" title="Lisää asianomistaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Todistajat</div>
-                    <div class="person-tags" id="rv2-todistajat">
-                      <span class="ptag tod">Saarinen, Jukka<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää todistaja RV2:een...')" title="Lisää todistaja">＋</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Esitutkinta</div>
-              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Aika ja paikka</div>
-              <div class="rv-value rv-inline-row">
-                <span class="date-field" onclick="openDatePicker(this)">15.1.2024</span>
-                <span class="rv-inline-sep">·</span>
-                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
-                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
-              <div class="rv-value" contenteditable="true">Virtanen ja Korhonen ovat yhdessä 15.1.2024 Helsingissä väärentäneet XYZ Capital Oy:n sijoitusesitteen "Growth Fund 2024" lisäämällä siihen totuudenvastaisia tietoja yhtiön hallinnoiman varallisuuden määrästä ja sijoitustoiminnan tuloksista. Korhonen on teknisesti toteuttanut väärentämisen muokkaamalla alkuperäistä asiakirjaa Virtasen ohjeiden mukaisesti. Väärennettyä asiakirjaa on käytetty petollisessa menettelyssä asianomistajien erehdyttämiseen.</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Riidattomat seikat</div>
-              <div class="rv-value" contenteditable="true">Virtanen ja Korhonen ovat myöntäneet muokanneensa sijoitusesitettä. Asiakirja on tunnistettu väärennetyksi asiantuntijatutkimuksessa.</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Kirjallinen todistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv2-kir">
-                  <li class="ev-item">
-                    <span class="ev-num">6</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Alkuperäinen sijoitusesite "Growth Fund 2024" (aito versio)</span>
-                      <span class="ev-theme" contenteditable="true">Väärennetyn version poikkeamat ovat näkyvissä vertailussa</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">7</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Väärennetty sijoitusesite "Growth Fund 2024"</span>
-                      <span class="ev-theme" contenteditable="true">Asiakirja sisältää totuudenvastaisia tietoja varallisuuden määrästä ja tuotoista</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                  <li class="ev-item">
-                    <span class="ev-num">8</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Digitaalinen forensiikkaraportti, Forensics Finland Oy 22.4.2024</span>
-                      <span class="ev-theme" contenteditable="true">Korhonen suoritti muokkauksen Virtasen ohjauksessa</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                </ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv2-kir', 'K')">＋ Lisää kirjallinen todiste</button>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Henkilötodistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv2-htod">
-                  <li class="ev-item">
-                    <span class="ev-num">1</span>
-                    <div class="ev-content">
-                      <span class="ev-text" contenteditable="true">Asiantuntijatodistaja Jukka Saarinen, digitaalinen forensiikka</span>
-                      <span class="ev-theme" contenteditable="true">Asiakirjan muokkaushistoria, ajankohta ja tekijä ovat selvitettävissä</span>
-                    </div>
-                    <button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>
-                  </li>
-                </ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv2-htod', 'T')">＋ Lisää henkilötodistaja</button>
-              </div>
-            </div>
-
-            <div class="rv-add-section-row">
-              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
-            </div>
-
-          </div>
-        </div><!-- /rv-2 -->
-
-        <!-- RV 3: Petos (suppeampi) -->
-        <div id="rv-3" class="rv-block" onclick="focusRV('rv-3')">
-          <div class="rv-head" onclick="toggleRV('rv-3-body', 'rv-3-icon'); event.stopPropagation()">
-            <div class="rv-head-title">
-              <div class="rv-head-main">
-                <span class="rv-head-num">3.</span>
-                <div class="rv-head-combo" onclick="openRvHeaderCombo(this); event.stopPropagation()" tabindex="0">
-                  <span class="rv-head-crime" id="rv-3-title">Petos</span><span class="rn-combo-caret">▾</span>
-                </div>
-                <span class="rv-head-date" id="rv-3-date">5.12.2023–14.1.2024</span>
-              </div>
-              <div class="rv-head-summary" id="rv-3-summary"></div>
-            </div>
-            <div class="rv-actions" onclick="event.stopPropagation()">
-              <button class="ca-btn" onclick="showToast('Rangaistusvaatimusta järjestetään...')">↕ Järjestä</button>
-              <button class="ca-btn del" onclick="removeRV('rv-3')">✕ Poista</button>
-            </div>
-            <span class="rv-toggle-icon collapsed" id="rv-3-icon">▼</span>
-          </div>
-
-          <div class="collapsible rv-body closed" id="rv-3-body" style="max-height: 2000px">
-
-            <div class="rv-field">
-              <div class="rv-label"></div>
-              <div class="rv-value">
-                <div class="rv-persons">
-                  <div>
-                    <div class="rv-psub-label">Vastaajat</div>
-                    <div class="person-tags" id="rv3-vastaajat">
-                      <span class="ptag">Markku Aleksi Virtanen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <span class="ptag">Aleksi Juhani Nieminen<button class="ptag-del" onclick="this.closest('.ptag').remove()">✕</button></span>
-                      <button class="add-person-btn" onclick="showToast('Lisää vastaaja RV3:een...')" title="Lisää vastaaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Asianomistajat</div>
-                    <div class="person-tags" id="rv3-asianomistajat">
-                      <button class="add-person-btn" onclick="showToast('Lisää asianomistaja RV3:een...')" title="Lisää asianomistaja">＋</button>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="rv-psub-label">Todistajat</div>
-                    <div class="person-tags" id="rv3-todistajat">
-                      <button class="add-person-btn" onclick="showToast('Lisää todistaja RV3:een...')" title="Lisää todistaja">＋</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Esitutkinta</div>
-              <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Aika ja paikka</div>
-              <div class="rv-value rv-inline-row">
-                <span class="date-field" onclick="openDatePicker(this)">5.12.2023 – 14.1.2024</span>
-                <span class="rv-inline-sep">·</span>
-                <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
-                  <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
-              <div class="rv-value empty-hint">Teonkuvaus puuttuu. Klikkaa kirjoittaaksesi.</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Riidattomat seikat</div>
-              <div class="rv-value" contenteditable="true" data-placeholder="Riidattomat seikat puuttuvat. Klikkaa kirjoittaaksesi."></div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Kirjallinen todistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv3-kir"></ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv3-kir', 'K')">＋ Lisää kirjallinen todiste</button>
-              </div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Henkilötodistelu</div>
-              <div class="rv-value">
-                <ul class="ev-list" id="ev-rv3-htod"></ul>
-                <button class="add-ev-btn" onclick="addEvItem('ev-rv3-htod', 'T')">＋ Lisää henkilötodistaja</button>
-              </div>
-            </div>
-
-            <div class="rv-add-section-row">
-              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
-            </div>
-
-          </div>
-        </div><!-- /rv-3 -->
+        <div id="rv-container"></div>
 
         <!-- Add RV -->
         <div class="add-row">
@@ -2177,37 +1611,7 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
         <div class="doc-section">
           <div class="ds-title">Yksityisoikeudelliset vaatimukset</div>
 
-          <div class="plain-block" id="yv-1">
-            <div class="pb-head" onclick="togglePB('yv-1-body', 'yv-1-tog')">
-              <span class="pb-title">Korvausvaatimus – Järvinen</span>
-              <span class="pb-toggle" id="yv-1-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body" id="yv-1-body" style="max-height: 500px">
-              <div contenteditable="true">Asianomistaja Paavo Järvinen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>200 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 15.1.2024 lukien.
-
-Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen aiheuttamaan taloudelliseen vahinkoon.</div>
-            </div>
-          </div>
-
-          <div class="plain-block" id="yv-2">
-            <div class="pb-head" onclick="togglePB('yv-2-body', 'yv-2-tog')">
-              <span class="pb-title">Korvausvaatimus – Heikkinen</span>
-              <span class="pb-toggle" id="yv-2-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body" id="yv-2-body" style="max-height: 500px">
-              <div contenteditable="true">Asianomistaja Leena Heikkinen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>350 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 22.1.2024 lukien.</div>
-            </div>
-          </div>
-
-          <div class="plain-block" id="yv-3">
-            <div class="pb-head" onclick="togglePB('yv-3-body', 'yv-3-tog')">
-              <span class="pb-title">Korvausvaatimus – Leinonen</span>
-              <span class="pb-toggle" id="yv-3-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body" id="yv-3-body" style="max-height: 500px">
-              <div contenteditable="true">Asianomistaja Mats Leinonen vaatii vastaaja Markku Aleksi Virtaselta vahingonkorvauksena <strong>300 000 euroa</strong> korkolain 4 §:n 1 momentin mukaisine korkoineen 8.2.2024 lukien.</div>
-            </div>
-          </div>
+          <div id="yv-container"></div>
 
           <button class="add-row-btn" style="margin-top:4px" onclick="showToast('Lisää yksityisoikeudellinen vaatimus...')">＋ Lisää korvausvaatimus</button>
         </div>
@@ -2218,35 +1622,7 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
         <div class="doc-section">
           <div class="ds-title">Lisätiedot</div>
 
-          <div class="plain-block">
-            <div class="pb-head" onclick="togglePB('li-1-body', 'li-1-tog')">
-              <span class="pb-title">Oikeuspaikkaa koskeva kannanotto</span>
-              <span class="pb-toggle" id="li-1-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body" id="li-1-body" style="max-height: 300px">
-              <div contenteditable="true">Asia kuuluu Helsingin käräjäoikeuden toimivaltaan, koska teot on tehty pääosin Helsingissä ja pääosa asianomistajista asuu Helsingissä.</div>
-            </div>
-          </div>
-
-          <div class="plain-block">
-            <div class="pb-head" onclick="togglePB('li-2-body', 'li-2-tog')">
-              <span class="pb-title">Seuraamuskannanotto</span>
-              <span class="pb-toggle" id="li-2-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body" id="li-2-body" style="max-height: 300px">
-              <div contenteditable="true">Syyttäjä vaatii Virtaselle ehdotonta vankeusrangaistusta rikoksen vakavuuden, suunnitelmallisuuden ja aiheutetun kokonaisvahingon (850 000 euroa) perusteella. Korhosen osalta syyttäjä vaatii ehdollista vankeusrangaistusta ottaen huomioon hänen avustajan roolensa ja nuorempi rikoshistoriansa.</div>
-            </div>
-          </div>
-
-          <div class="plain-block">
-            <div class="pb-head" onclick="togglePB('li-3-body', 'li-3-tog')">
-              <span class="pb-title">Muut lisätiedot</span>
-              <span class="pb-toggle collapsed" id="li-3-tog">▼</span>
-            </div>
-            <div class="collapsible pb-body closed" id="li-3-body" style="max-height: 300px">
-              <div contenteditable="true">Lisätiedot...</div>
-            </div>
-          </div>
+          <div id="li-container"></div>
         </div>
 
 
@@ -2388,6 +1764,7 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
   </div>
 </div>
 
+<script src="data.js"></script>
 <script src="common.js"></script>
 <script>
   // ===== AUTOSAVE =====
@@ -3515,6 +2892,237 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
     }
   });
 
+</script>
+<script>
+  // ===== CASE INIT FROM URL HASH =====
+  (function() {
+    var hash = window.location.hash.replace('#', '');
+    var parts = hash.split('/');
+    var caseId = parts[0];
+    var bucketId = parts[1];
+    if (!caseId) return;
+    var c = getCaseById(caseId);
+    if (!c) return;
+
+    var bucket = c.shBuckets.find(function(b){ return b.id === bucketId; });
+    var bucketLabel = bucket ? bucket.label : 'Haastehakemus';
+
+    // Navbar
+    var backBtn = document.getElementById('hh-back-btn');
+    backBtn.textContent = '← ' + c.diaarinumero;
+    backBtn.href = 'asia.html#' + c.id;
+    document.getElementById('hh-title').textContent = bucketLabel;
+    document.getElementById('hh-diaarinumero').textContent = c.diaarinumero;
+    document.title = bucketLabel + ' – ' + c.diaarinumero;
+
+    // Determine which charges belong to this bucket
+    var bucketVaatimukset = c.vaatimukset.filter(function(v) {
+      return c.shAssign[v.id] === bucketId;
+    });
+    var chargeIdsInBucket = {};
+    bucketVaatimukset.forEach(function(v){ chargeIdsInBucket[v.charge] = true; });
+    var hhCharges = c.charges.filter(function(ch){ return chargeIdsInBucket[ch.id]; });
+    if (!hhCharges.length) hhCharges = c.charges;
+
+    // ===== SIDEBAR OUTLINE =====
+    document.getElementById('sb-outline-charges').innerHTML = hhCharges.map(function(ch) {
+      return '<div class="outline-item" id="oi-rv-' + ch.num + '" onclick="scrollToSection(\'rv-' + ch.num + '\', this)">' +
+        '<span class="oi-badge">' + ch.num + '</span>' +
+        '<span class="oi-rv-name">' + ch.nimike + '</span>' +
+        '<span class="oi-dot ' + (ch.teonkuvaus ? 'ok' : 'empty') + '"></span>' +
+      '</div>';
+    }).join('');
+
+    // ===== SIDEBAR HENKILÖT =====
+    function sbVastaaja(v, idx) {
+      var chips = v.syytekohdat.map(function(n){ return '<span class="rv-chip" title="Syytekohta ' + n + '">' + n + '</span>'; }).join('');
+      var ageNum = parseInt(v.ika);
+      var ageWarn = (ageNum < 18) ? '<span class="age-warn u18" style="margin-top:4px;display:inline-flex">⚠ Alle 18 v – nuori rikoksentekijä</span>' : '';
+      return '<div class="vastaaja-card" id="v-sb-' + idx + '">' +
+        '<div class="vc-row"><div>' +
+          '<div class="vc-name">' + (idx+1) + '. ' + v.nimi + '</div>' +
+          '<div class="vc-meta">' + v.hetu + ' · ' + v.ika + '</div>' + ageWarn +
+        '</div><div class="vc-chips">' + chips + '</div></div>' +
+        '<div class="card-actions">' +
+          '<button class="ca-btn" onclick="showToast(\'Muokkaa vastaajaa...\')">✏ Muokkaa</button>' +
+          '<button class="ca-btn del" onclick="removeEl(\'v-sb-' + idx + '\', \'Vastaaja poistettu\')">✕ Poista</button>' +
+        '</div></div>';
+    }
+    function sbAO(a, idx) {
+      return '<div class="vastaaja-card" id="ao-sb-' + idx + '" style="background:#fefcf0;border-color:#e9d8a6;">' +
+        '<div class="vc-row"><div>' +
+          '<div class="vc-name" style="color:#78350f;">' + a.nimi + '</div>' +
+          '<div class="vc-meta">' + a.hetu + ' · ' + a.ika + '</div>' +
+        '</div></div>' +
+        '<div class="card-actions">' +
+          '<button class="ca-btn" onclick="showToast(\'Muokkaa asianomistajaa...\')">✏ Muokkaa</button>' +
+          '<button class="ca-btn del" onclick="removeEl(\'ao-sb-' + idx + '\', \'Asianomistaja poistettu\')">✕ Poista</button>' +
+        '</div></div>';
+    }
+    function sbTod(t, idx) {
+      return '<div class="todistaja-card" id="tod-sb-' + idx + '">' +
+        '<div class="vc-row"><div>' +
+          '<div class="tc-name">' + t.nimi + '</div>' +
+          '<div class="tc-meta">' + t.rooli + '</div>' +
+        '</div></div>' +
+        '<div class="card-actions">' +
+          '<button class="ca-btn" onclick="showToast(\'Muokkaa todistajaa...\')">✏ Muokkaa</button>' +
+          '<button class="ca-btn del" onclick="removeEl(\'tod-sb-' + idx + '\', \'Todistaja poistettu\')">✕ Poista</button>' +
+        '</div></div>';
+    }
+    var henkilotHtml = '<div class="subsec-label">Vastaajat</div>';
+    c.vastaajat.forEach(function(v, i){ henkilotHtml += sbVastaaja(v, i); });
+    if (c.asianomistajat.length) {
+      henkilotHtml += '<div class="subsec-label" style="margin-top:14px">Asianomistajat</div>';
+      c.asianomistajat.forEach(function(a, i){ henkilotHtml += sbAO(a, i); });
+    }
+    if (c.todistajat.length) {
+      henkilotHtml += '<div class="subsec-label" style="margin-top:12px">Todistajat</div>';
+      c.todistajat.forEach(function(t, i){ henkilotHtml += sbTod(t, i); });
+    }
+    henkilotHtml += '<div style="margin-top:8px"><button class="ca-btn" onclick="showToast(\'Lisää henkilö...\')" style="width:100%;justify-content:center">＋ Lisää henkilö</button></div>';
+    document.getElementById('sb-henkilot-content').innerHTML = henkilotHtml;
+
+    // ===== RV BLOCKS =====
+    function evItems(list, type) {
+      if (!list || !list.length) return '';
+      return list.map(function(e, i) {
+        return '<li class="ev-item">' +
+          '<span class="ev-num">' + (i+1) + '</span>' +
+          '<div class="ev-content">' +
+            '<span class="ev-text" contenteditable="true">' + e.teksti + '</span>' +
+            '<span class="ev-theme" contenteditable="true">' + e.teema + '</span>' +
+          '</div>' +
+          '<button class="ev-del" onclick="removeEvItem(this)" title="Poista">✕</button>' +
+        '</li>';
+      }).join('');
+    }
+
+    function personTags(vaatimukset, chargeId, asianomistajat, todistajat) {
+      var vastaajatForCharge = vaatimukset.filter(function(v){ return v.charge === chargeId; });
+      var vHtml = vastaajatForCharge.map(function(v){
+        var etusukunimi = v.vastaaja.split(', ').reverse().join(' ');
+        return '<span class="ptag">' + etusukunimi + '<button class="ptag-del" onclick="this.closest(\'.ptag\').remove()">✕</button></span>';
+      }).join('');
+      var aHtml = asianomistajat.map(function(a){
+        return '<span class="ptag ao">' + a.nimi + '<button class="ptag-del" onclick="this.closest(\'.ptag\').remove()">✕</button></span>';
+      }).join('');
+      var tHtml = todistajat.map(function(t){
+        return '<span class="ptag tod">' + t.nimi + '<button class="ptag-del" onclick="this.closest(\'.ptag\').remove()">✕</button></span>';
+      }).join('');
+      return '<div class="rv-persons">' +
+        '<div><div class="rv-psub-label">Vastaajat</div><div class="person-tags">' + vHtml +
+          '<button class="add-person-btn" onclick="showToast(\'Lisää vastaaja...\')" title="Lisää vastaaja">＋</button></div></div>' +
+        (asianomistajat.length ? '<div><div class="rv-psub-label">Asianomistajat</div><div class="person-tags">' + aHtml +
+          '<button class="add-person-btn" onclick="showToast(\'Lisää asianomistaja...\')" title="Lisää asianomistaja">＋</button></div></div>' : '') +
+        (todistajat.length ? '<div><div class="rv-psub-label">Todistajat</div><div class="person-tags">' + tHtml +
+          '<button class="add-person-btn" onclick="showToast(\'Lisää todistaja...\')" title="Lisää todistaja">＋</button></div></div>' : '') +
+      '</div>';
+    }
+
+    function buildRVBlock(ch) {
+      var kirId = 'ev-rv' + ch.num + '-kir';
+      var htodId = 'ev-rv' + ch.num + '-htod';
+      var kirItems = evItems(ch.kirjallinenTodistelu, 'K');
+      var htodItems = evItems(ch.henkilotodistelu, 'T');
+      var persons = personTags(c.vaatimukset, ch.id, c.asianomistajat, c.todistajat);
+      return '<div id="rv-' + ch.num + '" class="rv-block" onclick="focusRV(\'rv-' + ch.num + '\')">' +
+        '<div class="rv-head" onclick="toggleRV(\'rv-' + ch.num + '-body\', \'rv-' + ch.num + '-icon\'); event.stopPropagation()">' +
+          '<div class="rv-head-title">' +
+            '<div class="rv-head-main">' +
+              '<span class="rv-head-num">' + ch.num + '.</span>' +
+              '<div class="rv-head-combo" onclick="openRvHeaderCombo(this); event.stopPropagation()" tabindex="0">' +
+                '<span class="rv-head-crime" id="rv-' + ch.num + '-title">' + ch.nimike + '</span><span class="rn-combo-caret">▾</span>' +
+              '</div>' +
+              '<span class="rv-head-date" id="rv-' + ch.num + '-date">' + ch.aika + '</span>' +
+            '</div>' +
+            '<div class="rv-head-summary" id="rv-' + ch.num + '-summary"></div>' +
+          '</div>' +
+          '<div class="rv-actions" onclick="event.stopPropagation()">' +
+            '<button class="ca-btn" onclick="showToast(\'Järjestetään...\')">↕ Järjestä</button>' +
+            '<button class="ca-btn del" onclick="removeRV(\'rv-' + ch.num + '\')">✕ Poista</button>' +
+          '</div>' +
+          '<span class="rv-toggle-icon" id="rv-' + ch.num + '-icon">▼</span>' +
+        '</div>' +
+        '<div class="collapsible rv-body" id="rv-' + ch.num + '-body" style="max-height: 2000px">' +
+          '<div class="rv-field"><div class="rv-label"></div><div class="rv-value">' + persons + '</div></div>' +
+          '<div class="rv-field"><div class="rv-label">Esitutkinta</div><div class="rv-value" contenteditable="true">' + c.esitutkinta + '</div></div>' +
+          '<div class="rv-field"><div class="rv-label">Aika ja paikka</div>' +
+            '<div class="rv-value rv-inline-row">' +
+              '<span class="date-field" onclick="openDatePicker(this)">' + ch.aika + '</span>' +
+              '<span class="rv-inline-sep">·</span>' +
+              '<div class="rn-combo" onclick="openTpCombo(this)" tabindex="0"><span class="rn-nimi">' + ch.paikka + '</span><span class="rn-combo-caret">▾</span></div>' +
+            '</div></div>' +
+          '<div class="rv-field"><div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>' +
+            '<div class="rv-value" contenteditable="true">' + (ch.teonkuvaus || '') + '</div></div>' +
+          (ch.riidattomat ? '<div class="rv-field"><div class="rv-label">Riidattomat seikat</div><div class="rv-value" contenteditable="true">' + ch.riidattomat + '</div></div>' : '') +
+          '<div class="rv-field"><div class="rv-label">Kirjallinen todistelu</div><div class="rv-value">' +
+            '<ul class="ev-list" id="' + kirId + '">' + kirItems + '</ul>' +
+            '<button class="add-ev-btn" onclick="addEvItem(\'' + kirId + '\', \'K\')">＋ Lisää kirjallinen todiste</button>' +
+          '</div></div>' +
+          '<div class="rv-field"><div class="rv-label">Henkilötodistelu</div><div class="rv-value">' +
+            '<ul class="ev-list" id="' + htodId + '">' + htodItems + '</ul>' +
+            '<button class="add-ev-btn" onclick="addEvItem(\'' + htodId + '\', \'T\')">＋ Lisää henkilötodistaja</button>' +
+          '</div></div>' +
+          '<div class="rv-add-section-row"><button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button></div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    document.getElementById('rv-container').innerHTML = hhCharges.map(buildRVBlock).join('');
+
+    // Yksityisoikeudelliset vaatimukset
+    var yvContainer = document.getElementById('yv-container');
+    if (yvContainer) {
+      var yvItems = c.yksityisoikeudellisetVaatimukset || [];
+      yvContainer.innerHTML = yvItems.map(function(yv, i) {
+        var bodyId = 'yv-' + (i+1) + '-body';
+        var togId  = 'yv-' + (i+1) + '-tog';
+        return '<div class="plain-block">' +
+          '<div class="pb-head" onclick="togglePB(\'' + bodyId + '\',\'' + togId + '\')">' +
+            '<span class="pb-title">' + yv.otsikko + '</span>' +
+            '<span class="pb-toggle" id="' + togId + '">▼</span>' +
+          '</div>' +
+          '<div class="collapsible pb-body" id="' + bodyId + '" style="max-height:500px">' +
+            '<div contenteditable="true">' + yv.teksti + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // Lisätiedot
+    var liContainer = document.getElementById('li-container');
+    if (liContainer) {
+      var liItems = c.lisatiedot || [];
+      liContainer.innerHTML = liItems.map(function(li, i) {
+        var bodyId = 'li-' + (i+1) + '-body';
+        var togId  = 'li-' + (i+1) + '-tog';
+        var closed = li.suljettu ? ' closed' : '';
+        var togCls = li.suljettu ? ' collapsed' : '';
+        return '<div class="plain-block">' +
+          '<div class="pb-head" onclick="togglePB(\'' + bodyId + '\',\'' + togId + '\')">' +
+            '<span class="pb-title">' + li.otsikko + '</span>' +
+            '<span class="pb-toggle' + togCls + '" id="' + togId + '">▼</span>' +
+          '</div>' +
+          '<div class="collapsible pb-body' + closed + '" id="' + bodyId + '" style="max-height:300px">' +
+            '<div contenteditable="true">' + li.teksti + '</div>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // Update rvCount for the addRV() function
+    if (typeof rvCount !== 'undefined') rvCount = hhCharges.length;
+
+    // Tuomioistuin select
+    var ti = c.tuomioistuin.replace(' KO', ' käräjäoikeus');
+    var sel = document.getElementById('tuomioistuin-select');
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text === ti) { sel.selectedIndex = i; break; }
+      }
+    }
+  })();
 </script>
 </body>
 </html>

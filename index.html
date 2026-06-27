@@ -116,10 +116,12 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
-    .cc-status-dot.luonnos  { background: #f59e0b; }
-    .cc-status-dot.odottaa  { background: #94a3b8; }
-    .cc-status-dot.valmis   { background: #22c55e; }
-    .cc-status-dot.kiireell { background: #ef4444; }
+    .cc-status-dot.jaettu           { background: #7c3aed; }
+    .cc-status-dot.vastaanotettu    { background: #3b82f6; }
+    .cc-status-dot.syyteharkinnassa { background: #f59e0b; }
+    .cc-status-dot.odottaa          { background: #94a3b8; }
+    .cc-status-dot.oikeudessa       { background: #22c55e; }
+    .cc-status-dot.valmis           { background: #16a34a; }
 
     .cc-main { flex: 1; min-width: 0; }
 
@@ -158,12 +160,31 @@
       border-radius: 10px;
       font-weight: 600;
     }
-    .cc-tag.rikos    { background: #dbeafe; color: #1e40af; }
-    .cc-tag.luonnos  { background: #fef3c7; color: #92400e; }
-    .cc-tag.odottaa  { background: #f1f5f9; color: #475569; }
-    .cc-tag.valmis   { background: #dcfce7; color: #166534; }
-    .cc-tag.kiireell { background: #fee2e2; color: #991b1b; }
-    .cc-tag.neutral  { background: #f1f5f9; color: #475569; }
+    .cc-tag.rikos           { background: #dbeafe; color: #1e40af; }
+    .cc-tag.jaettu          { background: #ede9fe; color: #5b21b6; }
+    .cc-tag.vastaanotettu   { background: #dbeafe; color: #1e40af; }
+    .cc-tag.syyteharkinnassa{ background: #fef3c7; color: #92400e; }
+    .cc-tag.odottaa         { background: #f1f5f9; color: #475569; }
+    .cc-tag.oikeudessa      { background: #dcfce7; color: #166534; }
+    .cc-tag.valmis          { background: #d1fae5; color: #065f46; }
+    .cc-tag.neutral         { background: #f1f5f9; color: #475569; }
+
+    .hidden-notice {
+      font-size: 11.5px;
+      color: var(--muted);
+      text-align: center;
+      padding: 14px 0;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--navy-mid);
+      cursor: pointer;
+      font-size: inherit;
+      font-family: inherit;
+      text-decoration: underline;
+      padding: 0;
+    }
 
     .cc-meta {
       font-size: 11px;
@@ -211,7 +232,12 @@
       border-radius: 8px;
       padding: 12px 16px;
       flex: 1;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
     }
+    .stat-card:hover { border-color: var(--navy-mid); }
+    .stat-card.active { border-color: var(--navy); background: #f0f4ff; }
     .stat-num {
       font-size: 22px;
       font-weight: 700;
@@ -242,156 +268,125 @@
   <div class="jono-header">
     <div>
       <div class="jono-title">Työjono</div>
-      <div class="jono-subtitle">Helsingin syyttäjäalue · 5 avointa asiaa</div>
+      <div class="jono-subtitle" id="jono-subtitle">Helsingin syyttäjäalue</div>
     </div>
     <button class="cc-btn primary" onclick="showToast('Uusi asia...')">＋ Uusi asia</button>
   </div>
 
   <!-- Stats -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Luonnoksia</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">1</div>
-      <div class="stat-label">Odottaa lisätietoja</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">1</div>
-      <div class="stat-label">Valmis hyväksyttäväksi</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">18</div>
-      <div class="stat-label">Päivää keskimääräinen käsittelyaika</div>
-    </div>
-  </div>
+  <div class="stats-row" id="stats-row"></div>
 
   <!-- Filter bar -->
   <div class="filter-bar">
-    <input class="filter-search" type="text" placeholder="Hae asianumerolla, nimellä tai rikosnimikkeellä…">
-    <button class="filter-chip active">Kaikki</button>
-    <button class="filter-chip">Luonnokset</button>
-    <button class="filter-chip">Odottaa</button>
-    <button class="filter-chip">Valmiit</button>
+    <input class="filter-search" id="filter-search" type="text" placeholder="Hae asianumerolla, nimellä tai rikosnimikkeellä…">
+    <button class="filter-chip active" data-filter="aktiiviset">Aktiiviset</button>
+    <button class="filter-chip" data-filter="kaikki">Kaikki</button>
   </div>
 
-  <!-- Active cases -->
-  <div class="section-label">Työn alla</div>
-
-  <a href="asia.html" class="case-card active-case">
-    <div class="cc-status-dot luonnos"></div>
-    <div class="cc-main">
-      <div class="cc-top">
-        <span class="cc-id">R 24/2847</span>
-        <span class="cc-desc">Petos ja väärennys (Virtanen, Korhonen, Nieminen)</span>
-      </div>
-      <div class="cc-bottom">
-        <span class="cc-tag luonnos">Luonnos</span>
-        <span class="cc-tag rikos">Törkeä petos</span>
-        <span class="cc-tag rikos">Väärennys</span>
-        <span class="cc-meta">· 3 vastaajaa · Valmiusaste 68 %</span>
-      </div>
-    </div>
-    <div class="cc-deadline urgent">DL 15.7.2025</div>
-    <div class="cc-action">
-      <span class="cc-btn primary">Avaa →</span>
-    </div>
-  </a>
-
-  <a href="#" class="case-card" onclick="showToast('Asia R 24/3891 avautuu...')">
-    <div class="cc-status-dot luonnos"></div>
-    <div class="cc-main">
-      <div class="cc-top">
-        <span class="cc-id">R 24/3891</span>
-        <span class="cc-desc">Törkeä pahoinpitely (Heikkinen)</span>
-      </div>
-      <div class="cc-bottom">
-        <span class="cc-tag luonnos">Luonnos</span>
-        <span class="cc-tag rikos">Törkeä pahoinpitely</span>
-        <span class="cc-meta">· 1 vastaaja · Valmiusaste 42 %</span>
-      </div>
-    </div>
-    <div class="cc-deadline">DL 28.7.2025</div>
-    <div class="cc-action">
-      <span class="cc-btn">Avaa →</span>
-    </div>
-  </a>
-
-  <a href="#" class="case-card" onclick="showToast('Asia R 24/1019 avautuu...')">
-    <div class="cc-status-dot luonnos"></div>
-    <div class="cc-main">
-      <div class="cc-top">
-        <span class="cc-id">R 24/1019</span>
-        <span class="cc-desc">Kavallus (Saarinen)</span>
-      </div>
-      <div class="cc-bottom">
-        <span class="cc-tag luonnos">Luonnos</span>
-        <span class="cc-tag rikos">Kavallus</span>
-        <span class="cc-meta">· 1 vastaaja · Valmiusaste 15 %</span>
-      </div>
-    </div>
-    <div class="cc-deadline">DL 4.8.2025</div>
-    <div class="cc-action">
-      <span class="cc-btn">Avaa →</span>
-    </div>
-  </a>
-
-  <div class="section-label">Odottaa</div>
-
-  <a href="#" class="case-card" onclick="showToast('Asia R 24/1102 avautuu...')">
-    <div class="cc-status-dot odottaa"></div>
-    <div class="cc-main">
-      <div class="cc-top">
-        <span class="cc-id">R 24/1102</span>
-        <span class="cc-desc">Huumausainerikos (Nieminen, Korhonen)</span>
-      </div>
-      <div class="cc-bottom">
-        <span class="cc-tag odottaa">Odottaa lisätietoja</span>
-        <span class="cc-tag rikos">Huumausainerikos</span>
-        <span class="cc-meta">· 2 vastaajaa · Pyydetty 12.6.2025</span>
-      </div>
-    </div>
-    <div class="cc-deadline">–</div>
-    <div class="cc-action">
-      <span class="cc-btn">Avaa →</span>
-    </div>
-  </a>
-
-  <div class="section-label">Valmis hyväksyttäväksi</div>
-
-  <a href="#" class="case-card" onclick="showToast('Asia R 23/5241 avautuu...')">
-    <div class="cc-status-dot valmis"></div>
-    <div class="cc-main">
-      <div class="cc-top">
-        <span class="cc-id">R 23/5241</span>
-        <span class="cc-desc">Törkeä rattijuopumus (Mäkinen)</span>
-      </div>
-      <div class="cc-bottom">
-        <span class="cc-tag valmis">Valmis</span>
-        <span class="cc-tag rikos">Törkeä rattijuopumus</span>
-        <span class="cc-meta">· 1 vastaaja · Valmistui 24.6.2025</span>
-      </div>
-    </div>
-    <div class="cc-deadline">–</div>
-    <div class="cc-action">
-      <span class="cc-btn primary">Hyväksy →</span>
-    </div>
-  </a>
+  <!-- Cases rendered by JS -->
+  <div id="case-list"></div>
 
 </div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="data.js"></script>
 <script src="common.js"></script>
 <script>
-  // Filter chips — demo interaction
-  document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', function() {
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-      this.classList.add('active');
+  var HIDDEN_STATUSES = ['oikeudessa', 'valmis'];
+  var PRIMARY_STATUSES = ['jaettu', 'vastaanotettu', 'syyteharkinnassa', 'odottaa'];
+
+  var STAT_DEFS = [
+    { status: 'jaettu',           label: 'Jaettu' },
+    { status: 'vastaanotettu',    label: 'Vastaanotettu' },
+    { status: 'syyteharkinnassa', label: 'Syyteharkinnassa' },
+    { status: 'odottaa',          label: 'Odottaa' },
+  ];
+
+  var currentFilter = 'aktiiviset';
+  var searchQuery = '';
+
+  function filteredCases() {
+    return CASES.filter(function(c) {
+      if (currentFilter === 'aktiiviset' && HIDDEN_STATUSES.indexOf(c.status) !== -1) return false;
+      if (currentFilter !== 'aktiiviset' && currentFilter !== 'kaikki' && c.status !== currentFilter) return false;
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        var hay = (c.diaarinumero + ' ' + c.kuvaus + ' ' + c.tags.join(' ')).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
     });
+  }
+
+  function caseCardHtml(c) {
+    var dl = c.maaraaika ? 'DL ' + c.maaraaika : '–';
+    var dlClass = 'cc-deadline' + (c.maараikaUrgent ? ' urgent' : '');
+    var isPrimary = PRIMARY_STATUSES.indexOf(c.status) !== -1;
+    var tags = c.tags.map(function(t){ return '<span class="cc-tag rikos">' + t + '</span>'; }).join('');
+    var meta = '· ' + c.vastaajat.length + ' vastaaja' + (c.vastaajat.length !== 1 ? 'a' : '');
+    if (c.valmiusaste > 0 && c.valmiusaste < 100) meta += ' · Valmiusaste ' + c.valmiusaste + ' %';
+    if (c.status === 'odottaa') meta += ' · Pyydetty 12.6.2025';
+    return '<a href="asia.html#' + c.id + '" class="case-card">' +
+      '<div class="cc-status-dot ' + c.status + '"></div>' +
+      '<div class="cc-main">' +
+        '<div class="cc-top"><span class="cc-id">' + c.diaarinumero + '</span><span class="cc-desc">' + c.kuvaus + '</span></div>' +
+        '<div class="cc-bottom"><span class="cc-tag ' + c.status + '">' + c.statusLabel + '</span>' + tags + '<span class="cc-meta">' + meta + '</span></div>' +
+      '</div>' +
+      '<div class="' + dlClass + '">' + dl + '</div>' +
+      '<div class="cc-action"><span class="cc-btn' + (isPrimary ? ' primary' : '') + '">Avaa →</span></div>' +
+    '</a>';
+  }
+
+  function renderStats() {
+    document.getElementById('stats-row').innerHTML = STAT_DEFS.map(function(d) {
+      var n = CASES.filter(function(c){ return c.status === d.status; }).length;
+      var isActive = currentFilter === d.status;
+      return '<div class="stat-card' + (isActive ? ' active' : '') + '" onclick="toggleStatFilter(\'' + d.status + '\')">' +
+        '<div class="stat-num">' + n + '</div><div class="stat-label">' + d.label + '</div></div>';
+    }).join('');
+  }
+
+  function toggleStatFilter(status) {
+    setFilter(currentFilter === status ? 'aktiiviset' : status);
+  }
+
+  function renderCaseList() {
+    var cases = filteredCases();
+    var hiddenCount = CASES.filter(function(c){ return HIDDEN_STATUSES.indexOf(c.status) !== -1; }).length;
+    var html = cases.map(function(c){ return caseCardHtml(c); }).join('');
+    if (currentFilter === 'aktiiviset' && hiddenCount > 0) {
+      html += '<div class="hidden-notice">' + hiddenCount + ' asia' + (hiddenCount > 1 ? 'a' : '') +
+        ' piilotettu (Oikeudessa / Valmis) — <button class="link-btn" onclick="setFilter(\'kaikki\')">näytä kaikki</button></div>';
+    }
+    document.getElementById('case-list').innerHTML = html;
+
+    var activeCount = CASES.filter(function(c){ return HIDDEN_STATUSES.indexOf(c.status) === -1; }).length;
+    document.getElementById('jono-subtitle').textContent =
+      'Helsingin syyttäjäalue · ' + activeCount + ' aktiivista asiaa';
+  }
+
+  function setFilter(f) {
+    currentFilter = f;
+    var chipStatuses = ['aktiiviset', 'kaikki'];
+    document.querySelectorAll('.filter-chip').forEach(function(chip) {
+      chip.classList.toggle('active', chip.dataset.filter === f);
+    });
+    renderStats();
+    renderCaseList();
+  }
+
+  renderStats();
+  renderCaseList();
+
+  document.querySelectorAll('.filter-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() { setFilter(this.dataset.filter); });
+  });
+
+  document.getElementById('filter-search').addEventListener('input', function() {
+    searchQuery = this.value.trim();
+    renderCaseList();
   });
 </script>
 </body>

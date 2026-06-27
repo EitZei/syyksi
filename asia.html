@@ -324,17 +324,15 @@
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <a href="index.html" class="navbar-brand">
-
-    Syyttäjän työpöytä
-  </a>
+  <a href="index.html" class="navbar-brand">Syyttäjän työpöytä</a>
   <div class="nb-sep"></div>
   <a href="index.html" class="nb-btn nb-btn-ghost">← Työjono</a>
   <div class="nb-sep"></div>
-  <span class="navbar-case-id">R 24/2847</span>
-  <span class="navbar-case-desc">– Petos ja väärennys (Virtanen ym.)</span>
+  <span class="navbar-case-id" id="nb-case-id"></span>
+  <span class="navbar-case-desc" id="nb-case-desc"></span>
   <span class="navbar-spacer"></span>
-  <span class="status-chip">Luonnos</span>
+  <span class="status-chip" id="nb-status"></span>
+  <button class="nb-btn nb-btn-solid" id="nb-transition-btn" style="display:none" onclick="doStatusTransition()"></button>
   <span class="save-indicator" id="save-indicator">
     <span class="save-dot"></span>
     <span id="save-label">Tallennettu</span>
@@ -355,26 +353,7 @@
           <span class="sb-toggle" id="sb-meta-toggle">▾</span>
         </div>
         <div class="collapsible" id="sb-meta" style="max-height:300px">
-          <div class="meta-row" style="padding-top:8px">
-            <span class="meta-label">Diaarinumero</span>
-            <span class="meta-value">R 24/2847</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Tuomioistuin</span>
-            <span class="meta-value">Helsingin KO</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Saapunut</span>
-            <span class="meta-value">3.4.2024</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Määräaika</span>
-            <span class="meta-value" style="color:#ef4444;font-weight:600">15.7.2025</span>
-          </div>
-          <div class="meta-row" style="padding-bottom:8px">
-            <span class="meta-label">Esitutkinta</span>
-            <span class="meta-value">7100/R/3421/24</span>
-          </div>
+          <div id="sb-meta-content"></div>
         </div>
       </div>
 
@@ -385,25 +364,7 @@
           <span class="sb-toggle" id="sb-vastaajat-toggle">▾</span>
         </div>
         <div class="collapsible" id="sb-vastaajat" style="max-height:600px; padding: 6px 0;">
-          <div class="party-card vastaaja-card">
-            <div class="party-name">Virtanen, Markku Aleksi</div>
-            <div class="party-role">150380-1234 · 45 v</div>
-            <div class="party-badges">
-              <span class="party-badge">1</span>
-              <span class="party-badge">2</span>
-              <span class="party-badge">3</span>
-            </div>
-          </div>
-          <div class="party-card vastaaja-card">
-            <div class="party-name">Korhonen, Sirpa Tuulikki</div>
-            <div class="party-role">220685-5678 · 40 v</div>
-            <div class="party-badges"><span class="party-badge">2</span></div>
-          </div>
-          <div class="party-card vastaaja-card">
-            <div class="party-name">Nieminen, Aleksi Juhani</div>
-            <div class="party-role">120708A5555 · 16 v</div>
-            <div class="party-badges"><span class="party-badge">3</span></div>
-          </div>
+          <div id="sb-vastaajat-content"></div>
         </div>
       </div>
 
@@ -414,18 +375,7 @@
           <span class="sb-toggle" id="sb-ano-toggle">▾</span>
         </div>
         <div class="collapsible" id="sb-ano" style="max-height:400px; padding: 6px 0;">
-          <div class="party-card asianomistaja-card">
-            <div class="party-name">Järvinen, Paavo</div>
-            <div class="party-role">260170-2222 · 55 v</div>
-          </div>
-          <div class="party-card asianomistaja-card">
-            <div class="party-name">Heikkinen, Leena</div>
-            <div class="party-role">150882-3333 · 42 v</div>
-          </div>
-          <div class="party-card asianomistaja-card">
-            <div class="party-name">Leinonen, Mats</div>
-            <div class="party-role">010390-4444 · 35 v</div>
-          </div>
+          <div id="sb-ano-content"></div>
         </div>
       </div>
 
@@ -436,14 +386,7 @@
           <span class="sb-toggle" id="sb-tod-toggle">▾</span>
         </div>
         <div class="collapsible" id="sb-tod" style="max-height:400px; padding: 6px 0;">
-          <div class="party-card todistaja-card">
-            <div class="party-name">Mäkinen, Esko</div>
-            <div class="party-role">Kirjanpitäjä</div>
-          </div>
-          <div class="party-card todistaja-card">
-            <div class="party-name">Saarinen, Jukka</div>
-            <div class="party-role">Asiantuntijatodistaja</div>
-          </div>
+          <div id="sb-tod-content"></div>
         </div>
       </div>
 
@@ -574,8 +517,78 @@
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="data.js"></script>
 <script src="common.js"></script>
 <script>
+  // ===== CASE INIT =====
+  var activeCase = getCaseById(getCaseIdFromUrl());
+
+  // Status transition definitions
+  var STATUS_TRANSITIONS = {
+    vastaanotettu: { label: 'Aloita syyteharkinta →', next: 'syyteharkinnassa', nextLabel: 'Syyteharkinnassa' },
+    jaettu:        { label: 'Vastaanota asia →',       next: 'vastaanotettu',    nextLabel: 'Vastaanotettu' },
+  };
+
+  // Navbar
+  document.getElementById('nb-case-id').textContent  = activeCase.diaarinumero;
+  document.getElementById('nb-case-desc').textContent = '– ' + activeCase.kuvaus;
+  document.getElementById('nb-status').textContent    = activeCase.statusLabel;
+  updateTransitionBtn();
+
+  function updateTransitionBtn() {
+    var btn = document.getElementById('nb-transition-btn');
+    var tr = STATUS_TRANSITIONS[activeCase.status];
+    if (tr) {
+      btn.textContent = tr.label;
+      btn.style.display = '';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+
+  function doStatusTransition() {
+    var tr = STATUS_TRANSITIONS[activeCase.status];
+    if (!tr) return;
+    activeCase.status = tr.next;
+    activeCase.statusLabel = tr.nextLabel;
+    document.getElementById('nb-status').textContent = tr.nextLabel;
+    updateTransitionBtn();
+    showToast('Tila muutettu: ' + tr.nextLabel);
+  }
+
+  // Sidebar meta
+  var dlStyle = activeCase.maараikaUrgent ? 'color:#ef4444;font-weight:600' : '';
+  document.getElementById('sb-meta-content').innerHTML =
+    '<div class="meta-row" style="padding-top:8px"><span class="meta-label">Diaarinumero</span><span class="meta-value">' + activeCase.diaarinumero + '</span></div>' +
+    '<div class="meta-row"><span class="meta-label">Tuomioistuin</span><span class="meta-value">' + activeCase.tuomioistuin + '</span></div>' +
+    '<div class="meta-row"><span class="meta-label">Saapunut</span><span class="meta-value">' + activeCase.saapunut + '</span></div>' +
+    '<div class="meta-row"><span class="meta-label">Määräaika</span><span class="meta-value" style="' + dlStyle + '">' + (activeCase.maaraaika || '–') + '</span></div>' +
+    '<div class="meta-row" style="padding-bottom:8px"><span class="meta-label">Esitutkinta</span><span class="meta-value">' + activeCase.esitutkinta + '</span></div>';
+
+  // Vastaajat
+  document.getElementById('sb-vastaajat-content').innerHTML = activeCase.vastaajat.map(function(v){
+    var badges = v.syytekohdat.map(function(n){ return '<span class="party-badge">' + n + '</span>'; }).join('');
+    return '<div class="party-card vastaaja-card"><div class="party-name">' + v.nimi + '</div>' +
+      '<div class="party-role">' + v.hetu + ' · ' + v.ika + '</div>' +
+      (badges ? '<div class="party-badges">' + badges + '</div>' : '') + '</div>';
+  }).join('');
+
+  // Asianomistajat
+  document.getElementById('sb-ano-content').innerHTML = activeCase.asianomistajat.length
+    ? activeCase.asianomistajat.map(function(a){
+        return '<div class="party-card asianomistaja-card"><div class="party-name">' + a.nimi + '</div>' +
+          '<div class="party-role">' + a.hetu + ' · ' + a.ika + '</div></div>';
+      }).join('')
+    : '<div style="padding:8px 13px;font-size:11px;color:var(--muted)">Ei asianomistajia</div>';
+
+  // Todistajat
+  document.getElementById('sb-tod-content').innerHTML = activeCase.todistajat.length
+    ? activeCase.todistajat.map(function(t){
+        return '<div class="party-card todistaja-card"><div class="party-name">' + t.nimi + '</div>' +
+          '<div class="party-role">' + t.rooli + '</div></div>';
+      }).join('')
+    : '<div style="padding:8px 13px;font-size:11px;color:var(--muted)">Ei todistajia</div>';
+
   // Sidebar collapse
   function toggleSb(id) {
     const el  = document.getElementById(id);
@@ -584,22 +597,12 @@
     if (tog) tog.classList.toggle('collapsed');
   }
 
-  // ===== SYYTEHARKINTA DATA =====
-  var SH_CHARGES = [
-    { id: 'c1', num: 1, nimike: 'Törkeä petos',  aika: '1.1.2023–31.12.2023', paikka: 'Helsinki' },
-    { id: 'c2', num: 2, nimike: 'Väärennys',     aika: '15.3.2023',           paikka: 'Helsinki' },
-    { id: 'c3', num: 3, nimike: 'Laiton uhkaus', aika: '4.11.2023',           paikka: 'Espoo'    },
-  ];
-  var SH_VAATIMUKSET = [
-    { id: 'v1a', charge: 'c1', vastaaja: 'Virtanen, Markku Aleksi',  hetu: '150380-1234 · 45 v' },
-    { id: 'v1b', charge: 'c1', vastaaja: 'Korhonen, Sirpa Tuulikki', hetu: '220685-5678 · 40 v' },
-    { id: 'v2a', charge: 'c2', vastaaja: 'Virtanen, Markku Aleksi',  hetu: '150380-1234 · 45 v' },
-    { id: 'v2b', charge: 'c2', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
-    { id: 'v3a', charge: 'c3', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
-  ];
-  var shBuckets  = [];
-  var shAssign   = {};  // vaatimusId -> bucketId | ''
-  var shNextId   = 1;
+  // ===== SYYTEHARKINTA DATA — from activeCase =====
+  var SH_CHARGES     = activeCase.charges;
+  var SH_VAATIMUKSET = activeCase.vaatimukset;
+  var shBuckets = activeCase.shBuckets.map(function(b){ return { id: b.id, type: b.type, label: b.label }; });
+  var shAssign  = Object.assign({}, activeCase.shAssign);
+  var shNextId  = shBuckets.reduce(function(m, b){ var n = parseInt(b.id.replace('b','')); return n >= m ? n + 1 : m; }, 1);
 
   function shAddBucket(type) {
     var hhN  = shBuckets.filter(function(b){ return b.type === 'hh';  }).length + 1;
@@ -714,8 +717,9 @@
     // Buckets
     shBuckets.forEach(function(b){
       var items = SH_VAATIMUKSET.filter(function(v){ return shAssign[v.id] === b.id; });
+      var hhHash = activeCase.id + '/' + b.id;
       var actionBtn = b.type === 'hh'
-        ? '<a href="haastehakemus.html" class="sh-bucket-action hh" style="text-decoration:none">Avaa haastehakemus →</a>'
+        ? '<a href="haastehakemus.html#' + hhHash + '" class="sh-bucket-action hh" style="text-decoration:none">Avaa haastehakemus →</a>'
         : '<a href="#" class="sh-bucket-action hh" style="text-decoration:none" onclick="showToast(\'SJP-luonnos avataan...\');return false">Avaa SJP →</a>';
       html += '<div class="sh-section"><div class="sh-section-head ' + b.type + '">' +
         b.label +
@@ -759,7 +763,7 @@
         <div class="rt-card">
           <div class="rt-card-title">Haastehakemus kesken</div>
           <div class="rt-card-body">Valmiusaste 68 %. Riidattomat seikat puuttuvat kahdesta syytekohdasta.</div>
-          <a href="haastehakemus.html" class="rt-magic-btn" style="text-decoration:none;display:inline-flex">✏️ Muokkaa haastehakemusta</a>
+          <a href="#" class="rt-magic-btn" style="text-decoration:none;display:inline-flex" onclick="(function(){ var b=shBuckets.find(function(x){return x.type==='hh';}); window.location.href='haastehakemus.html#'+activeCase.id+'/'+(b?b.id:''); return false; })()">✏️ Muokkaa haastehakemusta</a>
         </div>
         <div class="rt-card">
           <div class="rt-card-title">Määräaika lähestyy</div>

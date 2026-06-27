@@ -901,6 +901,24 @@
       color: var(--active-border);
       background: var(--highlight);
     }
+    .rv-add-section-row { padding: 8px 0 4px; }
+    .rv-section-title-select {
+      font-size: 10.5pt; font-weight: 700; color: var(--navy);
+      border: none; background: transparent; cursor: pointer;
+      font-family: 'Segoe UI', sans-serif;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      font-size: 8.5pt; color: var(--muted);
+      padding: 0; outline: none;
+    }
+    .rv-section-title-select:hover { color: var(--navy); }
+    .rv-custom-section { position: relative; }
+    .rv-custom-section .rv-sec-del {
+      position: absolute; top: 0; right: 0;
+      background: none; border: none; cursor: pointer;
+      font-size: 10px; color: var(--muted); padding: 2px 4px;
+      opacity: 0; transition: opacity 0.15s;
+    }
+    .rv-custom-section:hover .rv-sec-del { opacity: 1; }
 
     /* Add section row */
     .add-row {
@@ -1241,10 +1259,12 @@
     .dp-confirm:hover { background: var(--navy-mid); }
 
     /* Tekoaika click target */
-    .rv-value.date-field {
+    .date-field {
       cursor: pointer;
     }
-    .rv-value.date-field:hover { background: #f0f6ff; border-radius: 2px; }
+    .date-field:hover { background: #f0f6ff; border-radius: 2px; }
+    .rv-inline-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .rv-inline-sep { color: var(--muted); font-size: 11pt; }
 
     /* Scrollbars */
     ::-webkit-scrollbar { width: 5px; }
@@ -1614,30 +1634,15 @@
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Rikosnimike</div>
-              <div class="rv-value">
-                <div class="rn-block">
-                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
-                    <span class="rn-nimi">Törkeä petos</span><span class="rn-combo-caret">▾</span>
-                  </div>
-                  <span class="rn-pykala" contenteditable="true">rikoslaki 36 luku 2 § 1 momentti (769/1990)</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
               <div class="rv-label">Esitutkinta</div>
               <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Tekoaika</div>
-              <div class="rv-value date-field" onclick="openDatePicker(this)">15.1.2024 – 20.3.2024</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Tekopaikka</div>
-              <div class="rv-value">
+              <div class="rv-label">Aika ja paikka</div>
+              <div class="rv-value rv-inline-row">
+                <span class="date-field" onclick="openDatePicker(this)">15.1.2024 – 20.3.2024</span>
+                <span class="rv-inline-sep">·</span>
                 <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
                   <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
                 </div>
@@ -1746,9 +1751,8 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
               </div>
             </div>
 
-            <div class="rv-field">
-              <div class="rv-label">Syyteoikeus</div>
-              <div class="rv-value" contenteditable="true">Syyte on nostettava kahden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            <div class="rv-add-section-row">
+              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
             </div>
 
           </div><!-- /rv-1-body -->
@@ -1809,30 +1813,15 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Rikosnimike</div>
-              <div class="rv-value">
-                <div class="rn-block">
-                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
-                    <span class="rn-nimi">Väärennys</span><span class="rn-combo-caret">▾</span>
-                  </div>
-                  <span class="rn-pykala" contenteditable="true">rikoslaki 33 luku 1 § (769/1990)</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
               <div class="rv-label">Esitutkinta</div>
               <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Tekoaika</div>
-              <div class="rv-value date-field" onclick="openDatePicker(this)">15.1.2024</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Tekopaikka</div>
-              <div class="rv-value">
+              <div class="rv-label">Aika ja paikka</div>
+              <div class="rv-value rv-inline-row">
+                <span class="date-field" onclick="openDatePicker(this)">15.1.2024</span>
+                <span class="rv-inline-sep">·</span>
                 <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
                   <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
                 </div>
@@ -1842,6 +1831,11 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
             <div class="rv-field">
               <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
               <div class="rv-value" contenteditable="true">Virtanen ja Korhonen ovat yhdessä 15.1.2024 Helsingissä väärentäneet XYZ Capital Oy:n sijoitusesitteen "Growth Fund 2024" lisäämällä siihen totuudenvastaisia tietoja yhtiön hallinnoiman varallisuuden määrästä ja sijoitustoiminnan tuloksista. Korhonen on teknisesti toteuttanut väärentämisen muokkaamalla alkuperäistä asiakirjaa Virtasen ohjeiden mukaisesti. Väärennettyä asiakirjaa on käytetty petollisessa menettelyssä asianomistajien erehdyttämiseen.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Riidattomat seikat</div>
+              <div class="rv-value" contenteditable="true">Virtanen ja Korhonen ovat myöntäneet muokanneensa sijoitusesitettä. Asiakirja on tunnistettu väärennetyksi asiantuntijatutkimuksessa.</div>
             </div>
 
             <div class="rv-field">
@@ -1894,9 +1888,8 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
               </div>
             </div>
 
-            <div class="rv-field">
-              <div class="rv-label">Syyteoikeus</div>
-              <div class="rv-value" contenteditable="true">Syyte on nostettava viiden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            <div class="rv-add-section-row">
+              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
             </div>
 
           </div>
@@ -1953,30 +1946,15 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Rikosnimike</div>
-              <div class="rv-value">
-                <div class="rn-block">
-                  <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
-                    <span class="rn-nimi">Petos</span><span class="rn-combo-caret">▾</span>
-                  </div>
-                  <span class="rn-pykala" contenteditable="true">rikoslaki 36 luku 1 § (769/1990)</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="rv-field">
               <div class="rv-label">Esitutkinta</div>
               <div class="rv-value" contenteditable="true">7100/R/3421/24</div>
             </div>
 
             <div class="rv-field">
-              <div class="rv-label">Tekoaika</div>
-              <div class="rv-value date-field" onclick="openDatePicker(this)">5.12.2023 – 14.1.2024</div>
-            </div>
-
-            <div class="rv-field">
-              <div class="rv-label">Tekopaikka</div>
-              <div class="rv-value">
+              <div class="rv-label">Aika ja paikka</div>
+              <div class="rv-value rv-inline-row">
+                <span class="date-field" onclick="openDatePicker(this)">5.12.2023 – 14.1.2024</span>
+                <span class="rv-inline-sep">·</span>
                 <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
                   <span class="rn-nimi">Helsinki</span><span class="rn-combo-caret">▾</span>
                 </div>
@@ -1986,6 +1964,11 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
             <div class="rv-field">
               <div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>
               <div class="rv-value empty-hint">Teonkuvaus puuttuu. Klikkaa kirjoittaaksesi.</div>
+            </div>
+
+            <div class="rv-field">
+              <div class="rv-label">Riidattomat seikat</div>
+              <div class="rv-value" contenteditable="true"></div>
             </div>
 
             <div class="rv-field">
@@ -2004,9 +1987,8 @@ Petollisilla vakuutuksillaan Virtanen on saanut asianomistajat luovuttamaan vara
               </div>
             </div>
 
-            <div class="rv-field">
-              <div class="rv-label">Syyteoikeus</div>
-              <div class="rv-value" contenteditable="true">Syyte on nostettava kahden vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+            <div class="rv-add-section-row">
+              <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
             </div>
 
           </div>
@@ -2270,6 +2252,26 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
     tog.classList.toggle('collapsed');
   }
 
+  // ===== CUSTOM RV SECTION =====
+  const RV_SECTION_OPTIONS = ['Syyteoikeus', 'Syyttämispyyntö', 'Lisätieto'];
+
+  function addRvSection(btn) {
+    const row = btn.closest('.rv-add-section-row');
+    const field = document.createElement('div');
+    field.className = 'rv-field rv-custom-section';
+    const opts = RV_SECTION_OPTIONS.map(o => `<option>${o}</option>`).join('');
+    field.innerHTML = `
+      <div class="rv-label">
+        <select class="rv-section-title-select">${opts}</select>
+      </div>
+      <div class="rv-value" contenteditable="true"></div>
+      <button class="rv-sec-del" onclick="this.closest('.rv-custom-section').remove(); markDirty()" title="Poista osio">✕</button>
+    `;
+    row.parentNode.insertBefore(field, row);
+    field.querySelector('.rv-value').focus();
+    markDirty();
+  }
+
   // ===== RV COLLAPSE =====
   function toggleRV(bodyId, iconId) {
     const body = document.getElementById(bodyId);
@@ -2403,27 +2405,14 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
           </div>
         </div>
         <div class="rv-field">
-          <div class="rv-label">Rikosnimike</div>
-          <div class="rv-value">
-            <div class="rn-block">
-              <div class="rn-combo" onclick="openRnCombo(this)" tabindex="0">
-                <span class="rn-nimi">Rikosnimike</span><span class="rn-combo-caret">▾</span>
-              </div>
-              <span class="rn-pykala" contenteditable="true">rikoslaki luku § momentti</span>
-            </div>
-          </div>
-        </div>
-        <div class="rv-field">
           <div class="rv-label">Esitutkinta</div>
           <div class="rv-value" contenteditable="true"></div>
         </div>
         <div class="rv-field">
-          <div class="rv-label">Tekoaika</div>
-          <div class="rv-value date-field" onclick="openDatePicker(this)"></div>
-        </div>
-        <div class="rv-field">
-          <div class="rv-label">Tekopaikka</div>
-          <div class="rv-value">
+          <div class="rv-label">Aika ja paikka</div>
+          <div class="rv-value rv-inline-row">
+            <span class="date-field" onclick="openDatePicker(this)">Valitse aika</span>
+            <span class="rv-inline-sep">·</span>
             <div class="rn-combo" onclick="openTpCombo(this)" tabindex="0">
               <span class="rn-nimi">Paikkakunta</span><span class="rn-combo-caret">▾</span>
             </div>
@@ -2451,9 +2440,8 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
             <button class="add-ev-btn" onclick="addEvItem('ev-${id}-htod', 'T')">＋ Lisää henkilötodistaja</button>
           </div>
         </div>
-        <div class="rv-field">
-          <div class="rv-label">Syyteoikeus</div>
-          <div class="rv-value" contenteditable="true">Syyte on nostettava ... vuoden kuluessa rikoksen tekemisestä. Syyteoikeus ei ole vanhentunut.</div>
+        <div class="rv-add-section-row">
+          <button class="add-ev-btn" onclick="addRvSection(this)">＋ Uusi osio</button>
         </div>
       </div>
     </div>`;
@@ -3116,6 +3104,13 @@ Vaatimus perustuu rikoslain 36 luvun 2 §:n nojalla tehdyn törkeän petoksen ai
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
       showToast('Tallennettu ✓');
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      const el = document.activeElement;
+      if (el && el.isContentEditable) {
+        e.preventDefault();
+        el.blur();
+      }
     }
   });
 

@@ -351,9 +351,9 @@
   var PRIMARY_STATUSES = ['jaettu', 'vastaanotettu', 'syyteharkinnassa', 'odottaa'];
 
   var STAT_DEFS = [
+    { status: 'syyteharkinnassa', label: 'Syyteharkinnassa' },
     { status: 'jaettu',           label: 'Jaettu' },
     { status: 'vastaanotettu',    label: 'Vastaanotettu' },
-    { status: 'syyteharkinnassa', label: 'Syyteharkinnassa' },
     { status: 'odottaa',          label: 'Odottaa' },
   ];
 
@@ -416,8 +416,27 @@
     setFilter(currentFilter === status ? 'aktiiviset' : status);
   }
 
+  var STATUS_ORDER = ['syyteharkinnassa', 'jaettu', 'vastaanotettu', 'odottaa', 'oikeudessa', 'valmis'];
+
+  function parseDate(s) {
+    var p = s.split('.');
+    return new Date(+p[2], +p[1] - 1, +p[0]);
+  }
+
+  function sortCases(cases) {
+    return cases.slice().sort(function(a, b) {
+      var aH = (a.huomiot || 0) > 0 ? 0 : 1;
+      var bH = (b.huomiot || 0) > 0 ? 0 : 1;
+      if (aH !== bH) return aH - bH;
+      var aS = STATUS_ORDER.indexOf(a.status);
+      var bS = STATUS_ORDER.indexOf(b.status);
+      if (aS !== bS) return aS - bS;
+      return parseDate(a.saapunut) - parseDate(b.saapunut);
+    });
+  }
+
   function renderCaseList() {
-    var cases = filteredCases();
+    var cases = sortCases(filteredCases());
     var hiddenCount = CASES.filter(function(c){ return HIDDEN_STATUSES.indexOf(c.status) !== -1; }).length;
     var html = cases.map(function(c){ return caseCardHtml(c); }).join('');
     if (currentFilter === 'aktiiviset' && hiddenCount > 0) {

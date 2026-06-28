@@ -434,10 +434,10 @@
       z-index: 20;
       box-shadow: -4px 0 16px rgba(0,0,0,0.07);
     }
-    .rt-panel.open { width: 290px; }
+    .rt-panel.open { width: 340px; }
 
     .rt-panel-inner {
-      width: 290px;
+      width: 340px;
       padding: 16px;
       overflow-y: auto;
       flex: 1;
@@ -463,14 +463,79 @@
     }
     .rt-panel-close:hover { color: var(--navy); background: #e8eaf0; }
 
+    /* ===== SEURAAMUSHARKINTA PANEL ===== */
+    .cl-charge-block { margin-bottom: 18px; }
+    .cl-charge-head {
+      font-size: 9.5pt; font-weight: 700; color: var(--navy);
+      padding: 5px 0 5px 0; border-bottom: 2px solid var(--navy);
+      margin-bottom: 10px;
+    }
+    .cl-sub-label {
+      font-size: 7.5pt; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      margin: 10px 0 5px 0;
+    }
+    .cl-fact-list { display: flex; flex-direction: column; gap: 3px; }
+    .cl-fact {
+      font-size: 8.5pt; color: var(--text); line-height: 1.4;
+      padding: 3px 6px; background: #f8f9fb; border-radius: 4px;
+      border-left: 2px solid #cbd5e1;
+    }
+    .cl-precedent {
+      background: white; border: 1px solid var(--border);
+      border-radius: 5px; padding: 7px 9px; margin-bottom: 5px;
+    }
+    .cl-prec-title { font-size: 8.5pt; font-weight: 700; color: var(--navy); }
+    .cl-prec-facts { font-size: 8pt; color: var(--muted); margin: 2px 0; line-height: 1.4; }
+    .cl-prec-verdict {
+      font-size: 8pt; font-weight: 600; color: #166534;
+      background: #dcfce7; border-radius: 3px; padding: 1px 5px;
+      display: inline-block; margin-top: 2px;
+    }
+    .cl-sentence-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 4px 0; border-bottom: 1px solid var(--border);
+      font-size: 8.5pt;
+    }
+    .cl-sentence-row:last-child { border-bottom: none; }
+    .cl-sentence-name { color: var(--text); font-weight: 500; }
+    .cl-sentence-val { color: var(--navy); font-weight: 700; font-size: 8pt; text-align: right; }
+    .cl-combined {
+      margin-top: 18px; padding-top: 14px;
+      border-top: 2px solid var(--navy);
+    }
+    .cl-combined-head {
+      font-size: 9.5pt; font-weight: 700; color: var(--navy); margin-bottom: 10px;
+    }
+    .cl-combined-row {
+      background: #eff6ff; border: 1px solid #bfdbfe;
+      border-radius: 6px; padding: 8px 10px; margin-bottom: 6px;
+    }
+    .cl-combined-name { font-size: 8.5pt; font-weight: 700; color: #1e40af; margin-bottom: 2px; }
+    .cl-combined-val { font-size: 9.5pt; font-weight: 700; color: #1e3a8a; }
+    .cl-combined-note { font-size: 7.5pt; color: var(--muted); margin-top: 2px; }
+    .cl-ai-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 7pt; color: #6b7280; background: #f3f4f6;
+      border-radius: 3px; padding: 1px 5px; margin-bottom: 12px;
+    }
+
     .rt-card {
       background: white;
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 10px 12px;
+      position: relative;
     }
-    .rt-card-title { font-size: 10pt; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .rt-card-title { font-size: 10pt; font-weight: 600; color: var(--text); margin-bottom: 3px; padding-right: 18px; }
     .rt-card-body { font-size: 9pt; color: var(--muted); line-height: 1.5; }
+    .rt-card-dismiss {
+      position: absolute; top: 8px; right: 8px;
+      background: none; border: none; cursor: pointer;
+      color: #94a3b8; font-size: 12px; line-height: 1;
+      padding: 1px 3px; border-radius: 3px;
+    }
+    .rt-card-dismiss:hover { color: var(--navy); background: #e8eaf0; }
     .rt-magic-btn {
       margin-top: 8px;
       display: inline-flex;
@@ -2204,15 +2269,18 @@
       title: 'Ehdotukset',
       render: () => `
         <div class="rt-card">
+          <button class="rt-card-dismiss" onclick="this.closest('.rt-card').remove()" title="Poista">✕</button>
           <div class="rt-card-title">Riidattomat seikat puuttuvat</div>
           <div class="rt-card-body">Syytekohdasta 2 ja syytekohdasta 3 puuttuvat riidattomat seikat.</div>
         </div>
         <div class="rt-card">
+          <button class="rt-card-dismiss" onclick="this.closest('.rt-card').remove()" title="Poista">✕</button>
           <div class="rt-card-title">Rikosuhrimaksu lisäämättä</div>
           <div class="rt-card-body">Vastaajalle Korhonen ei ole lisätty rikosuhrimaksua.</div>
           <button class="rt-magic-btn" onclick="autoRikosuhrimaksut()">✨ Lisää rikosuhrimaksut</button>
         </div>
         <div class="rt-card">
+          <button class="rt-card-dismiss" onclick="this.closest('.rt-card').remove()" title="Poista">✕</button>
           <div class="rt-card-title">Todistelukustannukset</div>
           <div class="rt-card-body">Henkilötodistelua on kirjattu mutta todistelukustannusten korvausvaatimus puuttuu.</div>
           <button class="rt-magic-btn" onclick="autoTodistelukustannukset()">✨ Lisää todistelukustannukset</button>
@@ -2253,20 +2321,125 @@
       `
     },
     caselaw: {
-      title: 'Oikeuskäytäntö',
+      title: '✨ Seuraamusharkinta',
       render: () => `
-        <div style="font-size:8.5pt;color:var(--muted)">Rangaistuskäytäntö — törkeä petos</div>
-        <div class="rt-card">
-          <div class="rt-card-title">KKO 2022:45</div>
-          <div class="rt-card-body">Törkeä petos, 12 milj. €. Tuomio: 2 v ehdoton vankeusrangaistus. Tekijä toistuvasti erehdyttänyt sijoittajia.</div>
+        <div class="cl-ai-badge">⚡ Järjestelmän ehdotus — tarkista ennen käyttöä</div>
+
+        <div class="cl-charge-block">
+          <div class="cl-charge-head">1. Törkeä petos</div>
+
+          <div class="cl-sub-label">Rangaistukseen vaikuttavat tosiseikat</div>
+          <div class="cl-fact-list">
+            <div class="cl-fact">Kokonaisvahinko 850 000 € — erityisen suuri</div>
+            <div class="cl-fact">Useita asianomistajia (3 henkilöä)</div>
+            <div class="cl-fact">Teko suunnitelmalinen, pitkäkestoinen (12 kk)</div>
+            <div class="cl-fact">Valehenkilöllisyydet ja väärennetyt asiakirjat</div>
+            <div class="cl-fact">Virtanen: päätekijä, johtava asema</div>
+            <div class="cl-fact">Korhonen: avustava rooli, rajattu osuus</div>
+          </div>
+
+          <div class="cl-sub-label">Vastaavat tapaukset</div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">KKO 2022:45</div>
+            <div class="cl-prec-facts">Törkeä petos, 12 milj. €, toistuva, useita uhreja, sijoitushuijaus</div>
+            <div class="cl-prec-verdict">2 v ehdoton</div>
+          </div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">HO Turku 2023:18</div>
+            <div class="cl-prec-facts">Törkeä petos, 3,5 milj. €, yksi pääasianomistaja, ei rikosrekisteriä</div>
+            <div class="cl-prec-verdict">1 v 8 kk ehdollinen + YKP</div>
+          </div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">HO Helsinki 2021:7</div>
+            <div class="cl-prec-facts">Petos ja väärennys, useita asianomistajia, avustava tekijä</div>
+            <div class="cl-prec-verdict">1 v 2 kk ehdollinen</div>
+          </div>
+
+          <div class="cl-sub-label">Seuraamus</div>
+          <div class="cl-sentence-row">
+            <span class="cl-sentence-name">Virtanen</span>
+            <span class="cl-sentence-val">2 v – 2 v 6 kk ehdoton</span>
+          </div>
+          <div class="cl-sentence-row">
+            <span class="cl-sentence-name">Korhonen</span>
+            <span class="cl-sentence-val">10 kk – 1 v ehdollinen</span>
+          </div>
         </div>
-        <div class="rt-card">
-          <div class="rt-card-title">HO Turku 2023:18</div>
-          <div class="rt-card-body">Törkeä petos, 3,5 milj. €. Tuomio: 1 v 8 kk ehdollinen + yhdyskuntapalvelu. Korvausvelvollisuus täysimääräinen.</div>
+
+        <div class="cl-charge-block">
+          <div class="cl-charge-head">2. Väärennys</div>
+
+          <div class="cl-sub-label">Rangaistukseen vaikuttavat tosiseikat</div>
+          <div class="cl-fact-list">
+            <div class="cl-fact">Väärennetty sijoitusesite käytetty petoksen välineenä</div>
+            <div class="cl-fact">Virtanen: toimeksianto ja hyötyminen</div>
+            <div class="cl-fact">Nieminen: tekninen toteutus ohjatusti, 16 v</div>
+          </div>
+
+          <div class="cl-sub-label">Vastaavat tapaukset</div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">HO Helsinki 2020:14</div>
+            <div class="cl-prec-facts">Väärennys petoksen yhteydessä, taloudellinen intressi, useita asiakirjoja</div>
+            <div class="cl-prec-verdict">8 kk ehdollinen</div>
+          </div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">HO Kouvola 2019:6</div>
+            <div class="cl-prec-facts">Väärennys, avustava tekijä, nuori ikä otettu huomioon</div>
+            <div class="cl-prec-verdict">4 kk ehdollinen</div>
+          </div>
+
+          <div class="cl-sub-label">Seuraamus</div>
+          <div class="cl-sentence-row">
+            <span class="cl-sentence-name">Virtanen</span>
+            <span class="cl-sentence-val">8 – 10 kk ehdollinen</span>
+          </div>
+          <div class="cl-sentence-row">
+            <span class="cl-sentence-name">Nieminen</span>
+            <span class="cl-sentence-val">3 – 5 kk ehdollinen</span>
+          </div>
         </div>
-        <div class="rt-card">
-          <div class="rt-card-title">HO Helsinki 2021:7</div>
-          <div class="rt-card-body">Petos ja väärennys, useita asianomistajia. Tuomio: 1 v 2 kk ehdollinen. Tekijällä aiempi rikosrekisteri otettu huomioon.</div>
+
+        <div class="cl-charge-block">
+          <div class="cl-charge-head">3. Laiton uhkaus</div>
+
+          <div class="cl-sub-label">Rangaistukseen vaikuttavat tosiseikat</div>
+          <div class="cl-fact-list">
+            <div class="cl-fact">Uhkaus viranomaistoiminnan estämiseksi</div>
+            <div class="cl-fact">Nieminen: 16 v, nuorisorikosprosessi</div>
+          </div>
+
+          <div class="cl-sub-label">Vastaavat tapaukset</div>
+          <div class="cl-precedent">
+            <div class="cl-prec-title">KO Helsinki 2022</div>
+            <div class="cl-prec-facts">Laiton uhkaus, nuori tekijä, yhteys rikolliseen toimintaan</div>
+            <div class="cl-prec-verdict">Sakko / 2 kk ehdollinen</div>
+          </div>
+
+          <div class="cl-sub-label">Seuraamus</div>
+          <div class="cl-sentence-row">
+            <span class="cl-sentence-name">Nieminen</span>
+            <span class="cl-sentence-val">Sakko – 2 kk ehdollinen</span>
+          </div>
+        </div>
+
+        <div class="cl-combined">
+          <div class="cl-combined-head">Yhteinen rangaistus</div>
+          <button onclick="vieSeuraamuskannanotto()" style="width:100%;margin-bottom:12px;padding:7px 10px;background:var(--navy);color:white;border:none;border-radius:6px;font-size:8.5pt;font-weight:600;cursor:pointer;text-align:left;">→ Vie seuraamuskannanotoksi</button>
+          <div class="cl-combined-row">
+            <div class="cl-combined-name">Virtanen, Markku Aleksi</div>
+            <div class="cl-combined-val">2 v 4 kk – 3 v ehdoton</div>
+            <div class="cl-combined-note">Törkeä petos (pää) + Väärennys. Ehdoton vankeus perusteltavissa rikoksen vakavuuden ja suunnitelmallisuuden perusteella.</div>
+          </div>
+          <div class="cl-combined-row">
+            <div class="cl-combined-name">Korhonen, Sirpa Tuulikki</div>
+            <div class="cl-combined-val">10 kk – 1 v 2 kk ehdollinen</div>
+            <div class="cl-combined-note">Törkeä petos (avustava). Ehdollinen mahdollinen, ei aiempaa rikosrekisteriä.</div>
+          </div>
+          <div class="cl-combined-row">
+            <div class="cl-combined-name">Nieminen, Aleksi Juhani</div>
+            <div class="cl-combined-val">4 – 7 kk ehdollinen</div>
+            <div class="cl-combined-note">Väärennys + Laiton uhkaus. Nuorisorangaistus harkittava (16 v tekohetkellä).</div>
+          </div>
         </div>
       `
     }
@@ -3122,6 +3295,36 @@
       }
     }
   })();
+
+  function vieSeuraamuskannanotto() {
+    var teksti =
+      'Virtanen, Markku Aleksi (törkeä petos + väärennys): ' +
+      'Rikoslain 6 luvun säännösten ja vakiintuneen oikeuskäytännön perusteella ' +
+      'syyttäjä vaatii ehdotonta vankeusrangaistusta 2 vuotta 4 kuukautta – 3 vuotta. ' +
+      'Ehdotonta vankeutta puoltavat rikoksen vakavuus, suunnitelmallisuus, pitkä tekoaika sekä aiheutetun kokonaisvahingon (850 000 €) suuruus.\n\n' +
+      'Korhonen, Sirpa Tuulikki (törkeä petos, avustava rooli): ' +
+      'Syyttäjä vaatii ehdollista vankeusrangaistusta 10 kuukautta – 1 vuotta 2 kuukautta. ' +
+      'Ehdollinen on perusteltavissa avustavan roolin ja puhtaan rikosrekisterin vuoksi.\n\n' +
+      'Nieminen, Aleksi Juhani (väärennys + laiton uhkaus): ' +
+      'Syyttäjä vaatii ehdollista vankeusrangaistusta 4–7 kuukautta. ' +
+      'Nuorisorangaistusta on harkittava, sillä Nieminen oli tekohetkellä 16-vuotias.';
+
+    var li2 = document.getElementById('li-2-body');
+    if (li2) {
+      var ed = li2.querySelector('[contenteditable]');
+      if (ed) {
+        ed.innerText = teksti;
+        if (li2.classList.contains('closed')) {
+          li2.classList.remove('closed');
+          var tog = document.getElementById('li-2-tog');
+          if (tog) tog.classList.remove('collapsed');
+        }
+      }
+    }
+    toggleRtPanel('caselaw');
+    scrollToSection('sec-lisatiedot', null);
+    showToast('Seuraamuskannanotto viety lisätietoihin');
+  }
 </script>
 </body>
 </html>

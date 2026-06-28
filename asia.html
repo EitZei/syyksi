@@ -17,6 +17,81 @@
       flex-shrink: 0;
     }
 
+    /* ===== HUOMIOT BANNER ===== */
+    .huomiot-banner {
+      background: #fffbeb;
+      border-bottom: 1px solid #fde68a;
+      padding: 10px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .huomiot-banner-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #92400e;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .huomiot-banner-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f59e0b;
+      flex-shrink: 0;
+      animation: huomio-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes huomio-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .huomio-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: #78350f;
+      background: white;
+      border: 1px solid #fde68a;
+      border-radius: 6px;
+      padding: 7px 10px 7px 12px;
+    }
+    .huomio-row::before {
+      content: '!';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .huomio-teksti { flex: 1; }
+    .huomio-dismiss {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #d97706;
+      font-size: 14px;
+      line-height: 1;
+      padding: 2px 4px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      opacity: 0.7;
+      transition: opacity 0.15s, background 0.15s;
+    }
+    .huomio-dismiss:hover { opacity: 1; background: #fef3c7; }
+    .huomio-row.dismissed {
+      opacity: 0;
+      transform: translateX(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+
     /* ===== TABS ===== */
     .tab-bar {
       display: flex;
@@ -396,6 +471,9 @@
   <!-- MAIN AREA -->
   <main class="main-area" style="padding-top:0; padding-left:0; padding-right:0;">
 
+    <!-- Huomiot banner -->
+    <div id="huomiot-banner" class="huomiot-banner" style="display:none"></div>
+
     <!-- Tab bar -->
     <div class="tab-bar">
       <div class="tab active" onclick="switchTab('syyteharkinta', this)">Syyteharkinta</div>
@@ -588,6 +666,35 @@
           '<div class="party-role">' + t.rooli + '</div></div>';
       }).join('')
     : '<div style="padding:8px 13px;font-size:11px;color:var(--muted)">Ei todistajia</div>';
+
+  // ===== HUOMIOT BANNER =====
+  var dismissedHuomiot = {};
+
+  function renderHuomiotBanner() {
+    var items = (activeCase.huomiotItems || []).filter(function(h) { return !dismissedHuomiot[h.id]; });
+    var banner = document.getElementById('huomiot-banner');
+    if (items.length === 0) { banner.style.display = 'none'; return; }
+    banner.style.display = '';
+    banner.innerHTML =
+      '<div class="huomiot-banner-header"><span class="huomiot-banner-dot"></span>Huomiot (' + items.length + ')</div>' +
+      items.map(function(h) {
+        return '<div class="huomio-row" id="huomio-' + h.id + '">' +
+          '<span class="huomio-teksti">' + h.teksti + '</span>' +
+          '<button class="huomio-dismiss" onclick="dismissHuomio(\'' + h.id + '\')" title="Kuittaa">✓ Kuittaa</button>' +
+        '</div>';
+      }).join('');
+  }
+
+  function dismissHuomio(id) {
+    var row = document.getElementById('huomio-' + id);
+    if (row) row.classList.add('dismissed');
+    setTimeout(function() {
+      dismissedHuomiot[id] = true;
+      renderHuomiotBanner();
+    }, 220);
+  }
+
+  renderHuomiotBanner();
 
   // Sidebar collapse
   function toggleSb(id) {

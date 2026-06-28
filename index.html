@@ -73,6 +73,11 @@
     }
     .filter-chip:hover { border-color: var(--navy-mid); color: var(--navy); }
     .filter-chip.active { background: var(--navy); color: white; border-color: var(--navy); }
+    .filter-chip.huomiot-chip { display: inline-flex; align-items: center; gap: 5px; background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .filter-chip.huomiot-chip:hover { background: #fde68a; border-color: #d97706; }
+    .filter-chip.huomiot-chip.active { background: #d97706; border-color: #b45309; color: white; }
+    .filter-chip.huomiot-chip.active .hc-dot { background: white; }
+    .hc-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; flex-shrink: 0; }
 
     /* ===== SECTION LABEL ===== */
     .section-label {
@@ -187,8 +192,26 @@
     }
 
     .cc-meta {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .cc-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       font-size: 11px;
       color: var(--muted);
+      white-space: nowrap;
+      width: 36px;
+    }
+    .cc-meta-item.cc-mi-date {
+      width: 82px;
+    }
+    .cc-meta-item svg {
+      flex-shrink: 0;
+      opacity: 0.65;
     }
 
     .cc-deadline {
@@ -201,6 +224,35 @@
 
     .cc-action {
       flex-shrink: 0;
+    }
+
+    .cc-huomiot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      border-radius: 12px;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      width: 90px;
+      flex-shrink: 0;
+    }
+    .cc-huomiot-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #f59e0b;
+      flex-shrink: 0;
+      animation: huomio-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes huomio-pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
     }
 
     .cc-btn {
@@ -281,6 +333,7 @@
     <input class="filter-search" id="filter-search" type="text" placeholder="Hae asianumerolla, nimellä tai rikosnimikkeellä…">
     <button class="filter-chip active" data-filter="aktiiviset">Aktiiviset</button>
     <button class="filter-chip" data-filter="kaikki">Kaikki</button>
+    <span id="huomiot-chip-wrap"></span>
   </div>
 
   <!-- Cases rendered by JS -->
@@ -309,8 +362,9 @@
 
   function filteredCases() {
     return CASES.filter(function(c) {
-      if (currentFilter === 'aktiiviset' && HIDDEN_STATUSES.indexOf(c.status) !== -1) return false;
-      if (currentFilter !== 'aktiiviset' && currentFilter !== 'kaikki' && c.status !== currentFilter) return false;
+      if (currentFilter === 'huomiot') { if (!c.huomiot || c.huomiot < 1) return false; }
+      else if (currentFilter === 'aktiiviset' && HIDDEN_STATUSES.indexOf(c.status) !== -1) return false;
+      else if (currentFilter !== 'aktiiviset' && currentFilter !== 'kaikki' && c.status !== currentFilter) return false;
       if (searchQuery) {
         var q = searchQuery.toLowerCase();
         var hay = (c.diaarinumero + ' ' + c.kuvaus + ' ' + c.tags.join(' ')).toLowerCase();
@@ -321,20 +375,30 @@
   }
 
   function caseCardHtml(c) {
-    var dl = c.maaraaika ? 'DL ' + c.maaraaika : '–';
-    var dlClass = 'cc-deadline' + (c.maараikaUrgent ? ' urgent' : '');
     var isPrimary = PRIMARY_STATUSES.indexOf(c.status) !== -1;
-    var tags = c.tags.map(function(t){ return '<span class="cc-tag rikos">' + t + '</span>'; }).join('');
-    var meta = '· ' + c.vastaajat.length + ' vastaaja' + (c.vastaajat.length !== 1 ? 'a' : '');
-    if (c.valmiusaste > 0 && c.valmiusaste < 100) meta += ' · Valmiusaste ' + c.valmiusaste + ' %';
-    if (c.status === 'odottaa') meta += ' · Pyydetty 12.6.2025';
+    var nimikkeitaLkm = c.charges ? c.charges.length : c.tags.length;
+    var vastaajiaLkm = c.vastaajat.length;
+    var huomiotLkm = c.huomiot || 0;
+    var iDoc = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>';
+    var iPerson = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+    var iCal = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+    var metaHtml =
+      '<span class="cc-meta-item">'           + iDoc    + nimikkeitaLkm + '</span>' +
+      '<span class="cc-meta-item">'           + iPerson + vastaajiaLkm  + '</span>' +
+      '<span class="cc-meta-item cc-mi-date">'+ iCal    + c.saapunut    + '</span>';
+    var huomiotBadge = huomiotLkm > 0
+      ? '<div class="cc-huomiot"><span class="cc-huomiot-dot"></span>' + huomiotLkm + ' huomio' + (huomiotLkm !== 1 ? 'ta' : '') + '</div>'
+      : '<div class="cc-huomiot" style="visibility:hidden" aria-hidden="true"></div>';
     return '<a href="asia.html#' + c.id + '" class="case-card">' +
       '<div class="cc-status-dot ' + c.status + '"></div>' +
       '<div class="cc-main">' +
         '<div class="cc-top"><span class="cc-id">' + c.diaarinumero + '</span><span class="cc-desc">' + c.kuvaus + '</span></div>' +
-        '<div class="cc-bottom"><span class="cc-tag ' + c.status + '">' + c.statusLabel + '</span>' + tags + '<span class="cc-meta">' + meta + '</span></div>' +
+        '<div class="cc-bottom">' +
+          '<span class="cc-tag ' + c.status + '">' + c.statusLabel + '</span>' +
+        '</div>' +
       '</div>' +
-      '<div class="' + dlClass + '">' + dl + '</div>' +
+      '<div class="cc-meta">' + metaHtml + '</div>' +
+      huomiotBadge +
       '<div class="cc-action"><span class="cc-btn' + (isPrimary ? ' primary' : '') + '">Avaa →</span></div>' +
     '</a>';
   }
@@ -367,20 +431,34 @@
       'Helsingin syyttäjäalue · ' + activeCount + ' aktiivista asiaa';
   }
 
+  function renderHuomiotChip() {
+    var total = CASES.reduce(function(sum, c) { return sum + (c.huomiot || 0); }, 0);
+    var wrap = document.getElementById('huomiot-chip-wrap');
+    if (!wrap) return;
+    if (total === 0) { wrap.innerHTML = ''; return; }
+    var isActive = currentFilter === 'huomiot';
+    wrap.innerHTML = '<button class="filter-chip huomiot-chip' + (isActive ? ' active' : '') + '" id="huomiot-chip">' +
+      '<span class="hc-dot"></span>' + total + ' huomio' + (total !== 1 ? 'ta' : '') + '</button>';
+    document.getElementById('huomiot-chip').addEventListener('click', function() {
+      setFilter(currentFilter === 'huomiot' ? 'aktiiviset' : 'huomiot');
+    });
+  }
+
   function setFilter(f) {
     currentFilter = f;
-    var chipStatuses = ['aktiiviset', 'kaikki'];
-    document.querySelectorAll('.filter-chip').forEach(function(chip) {
+    document.querySelectorAll('.filter-chip[data-filter]').forEach(function(chip) {
       chip.classList.toggle('active', chip.dataset.filter === f);
     });
+    renderHuomiotChip();
     renderStats();
     renderCaseList();
   }
 
   renderStats();
   renderCaseList();
+  renderHuomiotChip();
 
-  document.querySelectorAll('.filter-chip').forEach(function(chip) {
+  document.querySelectorAll('.filter-chip[data-filter]').forEach(function(chip) {
     chip.addEventListener('click', function() { setFilter(this.dataset.filter); });
   });
 

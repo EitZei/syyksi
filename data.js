@@ -81,6 +81,13 @@ var CASES = [
       { id: 'v3a', charge: 'c3', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
     ],
 
+    huomiot: 3,
+    huomiotItems: [
+      { id: 'h1', teksti: 'Haastehakemus toimittamatta käräjäoikeuteen – tarkista toimitusmääräaika' },
+      { id: 'h2', teksti: 'Korhosen puolustusasianajaja vaihtunut – päivitä yhteystiedot ja varmista tiedoksianto' },
+      { id: 'h3', teksti: 'Korvausvaatimusten loppusumma (850 000 €) tarkistamatta ennen haastehakemuksen allekirjoitusta' },
+    ],
+
     shBuckets: [
       { id: 'b1', type: 'hh', label: 'Haastehakemus 1' },
     ],
@@ -132,7 +139,8 @@ var CASES = [
       { id: 'v2a', charge: 'c2', vastaaja: 'Heikkinen, Jari Petteri', hetu: '880412-3456 · 37 v' },
     ],
 
-    // Freshly arrived — nothing assigned yet
+    huomiot: 0,
+
     shBuckets: [],
     shAssign:  {},
   },
@@ -161,6 +169,11 @@ var CASES = [
     vaatimukset: [
       { id: 'v1a', charge: 'c1', vastaaja: 'Saarinen, Kimmo Juhani', hetu: '770614-9012 · 48 v' },
     ],
+    huomiot: 1,
+    huomiotItems: [
+      { id: 'h1', teksti: 'Kirjanpitotarkastus kesken – esitutkinta odottaa lisätuloksia ennen syyteharkintaa' },
+    ],
+
     shBuckets: [],
     shAssign:  {},
   },
@@ -191,6 +204,12 @@ var CASES = [
       { id: 'v1a', charge: 'c1', vastaaja: 'Nieminen, Aleksi Juhani',  hetu: '120708A5555 · 16 v' },
       { id: 'v1b', charge: 'c1', vastaaja: 'Korhonen, Sirpa Tuulikki', hetu: '220685-5678 · 40 v' },
     ],
+    huomiot: 2,
+    huomiotItems: [
+      { id: 'h1', teksti: 'Nieminen on alaikäinen (16 v) – varmista nuorisorikosprosessin erityisvaatimukset' },
+      { id: 'h2', teksti: 'Esitutkintapöytäkirja toimittamatta – pyydä poliisilta viipymättä' },
+    ],
+
     shBuckets: [],
     shAssign:  {},
   },
@@ -219,6 +238,8 @@ var CASES = [
     vaatimukset: [
       { id: 'v1a', charge: 'c1', vastaaja: 'Mäkinen, Timo Antero', hetu: '650923-1234 · 60 v' },
     ],
+    huomiot: 0,
+
     shBuckets: [{ id: 'b1', type: 'hh', label: 'Haastehakemus 1' }],
     shAssign:  { v1a: 'b1' },
   },

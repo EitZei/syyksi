@@ -3053,8 +3053,8 @@
               '<div class="rn-combo" onclick="openTpCombo(this)" tabindex="0"><span class="rn-nimi">' + ch.paikka + '</span><span class="rn-combo-caret">▾</span></div>' +
             '</div></div>' +
           '<div class="rv-field"><div class="rv-label">Teonkuvaus <span class="edit-hint">klikkaa muokataksesi</span></div>' +
-            '<div class="rv-value" contenteditable="true">' + (ch.teonkuvaus || '') + '</div></div>' +
-          (ch.riidattomat ? '<div class="rv-field"><div class="rv-label">Riidattomat seikat</div><div class="rv-value" contenteditable="true">' + ch.riidattomat + '</div></div>' : '') +
+            '<div class="rv-value" contenteditable="true" data-placeholder="Kirjoita teonkuvaus…">' + (ch.teonkuvaus || '') + '</div></div>' +
+          '<div class="rv-field"><div class="rv-label">Riidattomat seikat</div><div class="rv-value" contenteditable="true" data-placeholder="Kirjoita riidattomat seikat…">' + (ch.riidattomat || '') + '</div></div>' +
           '<div class="rv-field"><div class="rv-label">Kirjallinen todistelu</div><div class="rv-value">' +
             '<ul class="ev-list" id="' + kirId + '">' + kirItems + '</ul>' +
             '<button class="add-ev-btn" onclick="addEvItem(\'' + kirId + '\', \'K\')">＋ Lisää kirjallinen todiste</button>' +

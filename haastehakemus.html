@@ -520,22 +520,7 @@
       border-radius: 3px; padding: 1px 5px; margin-bottom: 12px;
     }
 
-    .rt-card {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-      position: relative;
-    }
-    .rt-card-title { font-size: 10pt; font-weight: 600; color: var(--text); margin-bottom: 3px; padding-right: 18px; }
-    .rt-card-body { font-size: 9pt; color: var(--muted); line-height: 1.5; }
-    .rt-card-dismiss {
-      position: absolute; top: 8px; right: 8px;
-      background: none; border: none; cursor: pointer;
-      color: #94a3b8; font-size: 12px; line-height: 1;
-      padding: 1px 3px; border-radius: 3px;
-    }
-    .rt-card-dismiss:hover { color: var(--navy); background: #e8eaf0; }
+
     .rt-magic-btn {
       margin-top: 8px;
       display: inline-flex;
@@ -1348,6 +1333,20 @@
     .toast.show { opacity: 1; transform: translateY(0); }
 
     /* ===== DATE PICKER ===== */
+    .li-picker {
+      position: fixed; z-index: 2000;
+      background: white; border: 1px solid var(--border);
+      border-radius: 8px; box-shadow: 0 8px 28px rgba(0,0,0,0.14);
+      width: 260px; display: none;
+    }
+    .li-picker.open { display: block; }
+    .li-picker-opt {
+      padding: 10px 14px; font-size: 13px; cursor: pointer;
+      color: var(--text); font-family: 'Segoe UI', sans-serif;
+    }
+    .li-picker-opt:hover { background: #f1f5f9; }
+    .li-picker-sep { border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+
     .date-picker {
       position: fixed;
       background: white;
@@ -1688,6 +1687,9 @@
           <div class="ds-title">Lisätiedot</div>
 
           <div id="li-container"></div>
+          <div class="add-row">
+            <button class="add-row-btn" onclick="openLiPicker(this)">＋ Lisää lisätieto</button>
+          </div>
         </div>
 
 
@@ -1726,10 +1728,11 @@
     </button>
     <button class="rt-btn" id="rt-btn-registry" onclick="toggleRtPanel('registry')" title="Rikosrekisteri ja vireilläolot">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <path d="M3 9h18"/>
-        <path d="M9 21V9"/>
-        <path d="M7 6h.01"/><path d="M12 6h.01"/><path d="M17 6h.01"/>
+        <path d="m14.5 12.5-8 8a2.119 2.119 0 0 1-3-3l8-8"/>
+        <path d="m16 16 6-6"/>
+        <path d="m8 8 6-6"/>
+        <path d="m9 7 8 8"/>
+        <path d="m21 11-8-8"/>
       </svg>
     </button>
   </aside>
@@ -1807,6 +1810,14 @@
 <div class="rn-dropdown" id="rn-dropdown">
   <input type="text" id="rn-search" class="rn-search" placeholder="Hae rikosnimike…" oninput="rnFilter(this.value)" onkeydown="rnKey(event)">
   <ul class="rn-list" id="rn-list"></ul>
+</div>
+
+<!-- LISÄTIETO PICKER -->
+<div class="li-picker" id="li-picker">
+  <div class="li-picker-opt" onclick="addLisatieto('Oikeuspaikkaa koskeva kannanotto')">Oikeuspaikkaa koskeva kannanotto</div>
+  <div class="li-picker-opt" onclick="addLisatieto('Seuraamuskannanotto')">Seuraamuskannanotto</div>
+  <div class="li-picker-opt" onclick="addLisatieto('Muuta huomioitavaa')">Muuta huomioitavaa</div>
+  <div class="li-picker-opt li-picker-sep" onclick="addLisatieto('')">Tyhjä (vapaa otsikko)</div>
 </div>
 
 <!-- DATE PICKER -->
@@ -2135,6 +2146,52 @@
 
   // ===== MUUT VAATIMUKSET =====
   let muutCount = 0;
+
+  let liCount = 0;
+  function openLiPicker(btn) {
+    const picker = document.getElementById('li-picker');
+    const rect = btn.getBoundingClientRect();
+    picker.style.top = (rect.bottom + 4) + 'px';
+    picker.style.left = Math.min(rect.left, window.innerWidth - 270) + 'px';
+    picker.classList.toggle('open');
+  }
+  function addLisatieto(title) {
+    document.getElementById('li-picker').classList.remove('open');
+    liCount++;
+    const id = 'li-dyn-' + liCount;
+    const displayTitle = title || 'Uusi lisätieto';
+    const html = `<div class="plain-block" id="${id}" style="margin-bottom:8px">
+      <div class="pb-head" onclick="togglePB('${id}-body','${id}-tog')">
+        <span class="pb-title" contenteditable="true" onclick="event.stopPropagation()">${displayTitle}</span>
+        <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
+          <div onclick="event.stopPropagation();removeEl('${id}','Lisätieto poistettu')" style="cursor:pointer;color:var(--muted);font-size:12px;padding:0 4px">✕</div>
+          <span class="pb-toggle" id="${id}-tog">▼</span>
+        </div>
+      </div>
+      <div class="collapsible pb-body" id="${id}-body" style="max-height:300px">
+        <div contenteditable="true"></div>
+      </div>
+    </div>`;
+    document.getElementById('li-container').insertAdjacentHTML('beforeend', html);
+    // open the body
+    const body = document.getElementById(id + '-body');
+    body.style.maxHeight = '300px';
+    // focus title if blank
+    if (!title) {
+      const t = document.getElementById(id).querySelector('.pb-title');
+      t.focus();
+      document.execCommand('selectAll');
+    }
+    showToast('Lisätieto lisätty');
+  }
+  document.addEventListener('click', function(e) {
+    const picker = document.getElementById('li-picker');
+    if (picker && picker.classList.contains('open') &&
+        !picker.contains(e.target) && !e.target.closest('[onclick*="openLiPicker"]')) {
+      picker.classList.remove('open');
+    }
+  });
+
   function addMuuVaatimus() {
     muutCount++;
     const container = document.getElementById('muut-container');
@@ -2290,33 +2347,79 @@
     registry: {
       title: 'Rikosrekisteri ja vireilläolot',
       render: () => `
-        <div style="font-size:8.5pt;color:var(--muted)">Vastaajat</div>
-        <div class="rt-card">
-          <div class="rt-card-title">Virtanen, Markku Aleksi</div>
-          <div class="rt-card-body" style="margin-bottom:6px">
-            <span style="display:inline-block;background:#fee2e2;color:#991b1b;font-size:8pt;font-weight:600;border-radius:3px;padding:1px 6px;margin-bottom:4px">2 merkintää</span><br>
-            Törkeä rattijuopumus 2019 · 60 pv ehdollinen<br>
-            Petos 2021 · sakko
+        <div class="rr-section-label">Vastaajat</div>
+
+        <!-- Virtanen -->
+        <div class="rt-card" style="margin-bottom:8px">
+          <div class="rr-header">
+            <div>
+              <div class="rt-card-title">Virtanen, Markku Aleksi</div>
+              <span class="rr-badge punainen">2 merkintää</span>
+            </div>
+            <a class="rr-ote-link" href="#" onclick="showToast('Avataan rekisteriote…');return false">Avaa ote →</a>
           </div>
-          <div style="font-size:8.5pt;color:var(--muted);font-weight:600;margin-bottom:2px">Vireilläolot</div>
-          <div class="rt-card-body">Ei muita vireilläolevia asioita.</div>
+
+          <div class="rr-section-label">Tuomiot</div>
+          <div class="rr-tuomio">
+            <div class="rr-tuomio-nimike">Törkeä rattijuopumus</div>
+            <div class="rr-tuomio-meta">Teko: 3.6.2018 &nbsp;·&nbsp; Tuomio: 15.9.2019 &nbsp;·&nbsp; Helsinki KO</div>
+            <div class="rr-tuomio-seuraamus">60 pv ehdollinen vankeusrangaistus</div>
+          </div>
+          <div class="rr-tuomio">
+            <div class="rr-tuomio-nimike">Petos</div>
+            <div class="rr-tuomio-meta">Teko: 12.3.2020–8.2.2021 &nbsp;·&nbsp; Tuomio: 4.10.2021 &nbsp;·&nbsp; Helsinki KO</div>
+            <div class="rr-tuomio-seuraamus">Sakko 60 pv</div>
+          </div>
+
+          <div class="rr-konkurrenssi">
+            <div class="rr-konkurrenssi-head">⚠ Jälkikonkurrenssi</div>
+            Käsiteltävän jutun tekoaika (1.1.2021–) alkaa ennen 4.10.2021 annettua tuomiota.
+            Asia olisi voitu käsitellä yhdessä Helsinki KO:n istunnossa 4.10.2021.<br>
+            Konkurrenssiryhmässä jo tuomittu: <strong>sakko 60 pv</strong>.
+            <br><a class="rr-konkurrenssi-link" href="#" onclick="showToast('Avataan konkurrenssilaskelma…');return false">Näytä konkurrenssilaskelma →</a>
+          </div>
+
+          <div class="rr-section-label">Vireilläolot</div>
+          <div class="rr-vireillaolo">Ei muita vireilläolevia asioita.</div>
         </div>
-        <div class="rt-card">
-          <div class="rt-card-title">Korhonen, Sirpa Tuulikki</div>
-          <div class="rt-card-body" style="margin-bottom:6px">
-            <span style="display:inline-block;background:#dcfce7;color:#166534;font-size:8pt;font-weight:600;border-radius:3px;padding:1px 6px;margin-bottom:4px">Ei merkintöjä</span>
+
+        <!-- Korhonen -->
+        <div class="rt-card" style="margin-bottom:8px">
+          <div class="rr-header">
+            <div>
+              <div class="rt-card-title">Korhonen, Sirpa Tuulikki</div>
+              <span class="rr-badge vihrea">Ei merkintöjä</span>
+            </div>
+            <a class="rr-ote-link" href="#" onclick="showToast('Avataan rekisteriote…');return false">Avaa ote →</a>
           </div>
-          <div style="font-size:8.5pt;color:var(--muted);font-weight:600;margin-bottom:2px">Vireilläolot</div>
-          <div class="rt-card-body">Ei muita vireilläolevia asioita.</div>
+
+          <div class="rr-section-label">Vireilläolot</div>
+          <div class="rr-vireillaolo">Ei muita vireilläolevia asioita.</div>
         </div>
+
+        <!-- Nieminen -->
         <div class="rt-card">
-          <div class="rt-card-title">Nieminen, Aleksi Juhani</div>
-          <div class="rt-card-body" style="margin-bottom:6px">
-            <span style="display:inline-block;background:#fef9c3;color:#854d0e;font-size:8pt;font-weight:600;border-radius:3px;padding:1px 6px;margin-bottom:4px">1 merkintä</span><br>
-            Lievä pahoinpitely 2022 · sakko
+          <div class="rr-header">
+            <div>
+              <div class="rt-card-title">Nieminen, Aleksi Juhani</div>
+              <span class="rr-badge keltainen">1 merkintä</span>
+            </div>
+            <a class="rr-ote-link" href="#" onclick="showToast('Avataan rekisteriote…');return false">Avaa ote →</a>
           </div>
-          <div style="font-size:8.5pt;color:var(--muted);font-weight:600;margin-bottom:2px">Vireilläolot</div>
-          <div class="rt-card-body">Asia R 24/1102 käräjäoikeudessa, istunto 14.9.2025.</div>
+
+          <div class="rr-section-label">Tuomiot</div>
+          <div class="rr-tuomio">
+            <div class="rr-tuomio-nimike">Lievä pahoinpitely</div>
+            <div class="rr-tuomio-meta">Teko: 15.3.2022 &nbsp;·&nbsp; Tuomio: 5.8.2022 &nbsp;·&nbsp; Espoo KO</div>
+            <div class="rr-tuomio-seuraamus">Sakko 30 pv</div>
+          </div>
+
+          <div class="rr-section-label">Vireilläolot</div>
+          <div class="rr-vireillaolo">
+            <a class="rr-vireillaolo-link" href="asia.html#R241102" target="_blank">R 24/1102</a>
+            — Laiton uhkaus &amp; kotirauhan rikkominen<br>
+            <span style="font-size:8pt;color:var(--muted)">Helsinki KO, istunto 14.9.2025</span>
+          </div>
         </div>
       `
     },

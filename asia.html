@@ -617,8 +617,8 @@
 
   // Status transition definitions
   var STATUS_TRANSITIONS = {
-    vastaanotettu: { label: 'Aloita syyteharkinta →', next: 'syyteharkinnassa', nextLabel: 'Syyteharkinnassa' },
-    jaettu:        { label: 'Vastaanota asia →',       next: 'vastaanotettu',    nextLabel: 'Vastaanotettu' },
+    jonossa: { label: 'Aloita syyteharkinta →', next: 'syyteharkinnassa', nextLabel: 'Syyteharkinnassa' },
+    uusi:        { label: 'Vastaanota asia →',       next: 'jonossa',    nextLabel: 'Jonossa' },
   };
 
   // Navbar

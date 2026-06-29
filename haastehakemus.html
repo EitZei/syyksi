@@ -2210,7 +2210,7 @@
     // Collect unique defendant names across all RV blocks
     const seen = new Set();
     const names = [];
-    document.querySelectorAll('[id$="-vastaajat"] .ptag').forEach(p => {
+    document.querySelectorAll('.rv-persons .ptag:not(.ao):not(.tod)').forEach(p => {
       const name = getPtagName(p);
       if (name && !seen.has(name)) { seen.add(name); names.push(name); }
     });
@@ -2230,7 +2230,7 @@
       const htodList = rv.querySelector('[id$="-htod"]');
       if (!htodList || !htodList.querySelector('.ev-item')) return;
       const names = [];
-      rv.querySelectorAll('[id$="-vastaajat"] .ptag').forEach(p => {
+      rv.querySelectorAll('.rv-persons .ptag:not(.ao):not(.tod)').forEach(p => {
         const name = getPtagName(p);
         if (name) names.push(name);
       });

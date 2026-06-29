@@ -121,8 +121,8 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
-    .cc-status-dot.jaettu           { background: #7c3aed; }
-    .cc-status-dot.vastaanotettu    { background: #3b82f6; }
+    .cc-status-dot.uusi           { background: #7c3aed; }
+    .cc-status-dot.jonossa    { background: #3b82f6; }
     .cc-status-dot.syyteharkinnassa { background: #f59e0b; }
     .cc-status-dot.odottaa          { background: #94a3b8; }
     .cc-status-dot.oikeudessa       { background: #22c55e; }
@@ -166,8 +166,8 @@
       font-weight: 600;
     }
     .cc-tag.rikos           { background: #dbeafe; color: #1e40af; }
-    .cc-tag.jaettu          { background: #ede9fe; color: #5b21b6; }
-    .cc-tag.vastaanotettu   { background: #dbeafe; color: #1e40af; }
+    .cc-tag.uusi          { background: #ede9fe; color: #5b21b6; }
+    .cc-tag.jonossa   { background: #dbeafe; color: #1e40af; }
     .cc-tag.syyteharkinnassa{ background: #fef3c7; color: #92400e; }
     .cc-tag.odottaa         { background: #f1f5f9; color: #475569; }
     .cc-tag.oikeudessa      { background: #dcfce7; color: #166534; }
@@ -348,12 +348,12 @@
 <script src="common.js"></script>
 <script>
   var HIDDEN_STATUSES = ['oikeudessa', 'valmis'];
-  var PRIMARY_STATUSES = ['jaettu', 'vastaanotettu', 'syyteharkinnassa', 'odottaa'];
+  var PRIMARY_STATUSES = ['uusi', 'jonossa', 'syyteharkinnassa', 'odottaa'];
 
   var STAT_DEFS = [
     { status: 'syyteharkinnassa', label: 'Syyteharkinnassa' },
-    { status: 'jaettu',           label: 'Jaettu' },
-    { status: 'vastaanotettu',    label: 'Vastaanotettu' },
+    { status: 'uusi',           label: 'Uusi' },
+    { status: 'jonossa',    label: 'Jonossa' },
     { status: 'odottaa',          label: 'Odottaa' },
   ];
 
@@ -416,7 +416,7 @@
     setFilter(currentFilter === status ? 'aktiiviset' : status);
   }
 
-  var STATUS_ORDER = ['syyteharkinnassa', 'jaettu', 'vastaanotettu', 'odottaa', 'oikeudessa', 'valmis'];
+  var STATUS_ORDER = ['syyteharkinnassa', 'uusi', 'jonossa', 'odottaa', 'oikeudessa', 'valmis'];
 
   function parseDate(s) {
     var p = s.split('.');
